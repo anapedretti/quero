@@ -213,6 +213,47 @@
     .cart-total { display: flex; justify-content: space-between; padding: 14px 0 18px; border-top: 1px solid var(--line); font: 12px var(--mono); }
     .cart-empty { color: var(--muted); font-size: 12px; text-align: center; padding: 22px 0; }
     .cart-hint { color: var(--muted); font-size: 10px; text-align: center; margin-top: 12px; line-height: 1.5; }
+    .celebration-overlay { z-index: 11; overflow-y: auto; }
+    .celebration-modal { width: min(540px, 100%); padding: 0; overflow: hidden; border: 1px solid rgba(216,243,106,.38); background: var(--surface); }
+    .celebration-close { z-index: 2; color: #565c3c; }
+    .celebration-top { position: relative; min-height: 215px; display: grid; place-items: center; overflow: hidden; background: var(--lime); color: #191a12; text-align: center; }
+    .celebration-top::before, .celebration-top::after { content: ""; position: absolute; border: 1px solid rgba(25,26,18,.17); border-radius: 50%; }
+    .celebration-top::before { width: 270px; height: 270px; transform: translate(-2px, 15px); }
+    .celebration-top::after { width: 340px; height: 340px; transform: translate(-2px, 15px); }
+    .celebration-confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .celebration-confetti i { position: absolute; top: -12px; left: var(--x); width: 7px; height: 12px; border-radius: 2px; background: var(--confetti); animation: confetti-fall 2.8s var(--delay) ease-in infinite; }
+    .celebration-confetti i:nth-child(3n) { width: 9px; height: 9px; border-radius: 50%; }
+    .celebration-message { position: relative; z-index: 1; padding: 36px 24px 30px; }
+    .celebration-spark { display: grid; place-items: center; width: 72px; height: 72px; margin: 0 auto 17px; border: 1px solid rgba(25,26,18,.26); border-radius: 50%; background: rgba(255,255,255,.36); font-size: 38px; animation: happy-pop .55s cubic-bezier(.2,1.5,.5,1) both; }
+    .celebration-kicker { font: 10px var(--mono); letter-spacing: .15em; text-transform: uppercase; }
+    .celebration-title { max-width: 430px; margin: 9px auto 0; font: 600 clamp(32px, 8vw, 46px)/1 var(--display); letter-spacing: -.07em; }
+    .celebration-subtitle { margin: 9px 0 0; color: #565c3c; font-size: 12px; line-height: 1.6; }
+    .celebration-body { padding: 22px 26px 26px; }
+    .celebration-items { display: grid; gap: 9px; max-height: 190px; overflow-y: auto; }
+    .celebration-item { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 10px; border: 1px solid var(--line); background: var(--bg); }
+    .celebration-item-art { flex: 0 0 52px; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 3px; font-size: 30px; }
+    .celebration-item-copy { flex: 1; min-width: 0; }
+    .celebration-item-name { font-size: 12px; font-weight: 600; }
+    .celebration-item-category { margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .celebration-item-price { flex: 0 0 auto; color: var(--lime); font: 11px var(--mono); white-space: nowrap; }
+    .celebration-receipt { display: grid; gap: 9px; margin-top: 15px; padding-top: 14px; border-top: 1px solid var(--line); }
+    .celebration-receipt-row { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 11px; }
+    .celebration-receipt-row[hidden] { display: none; }
+    .celebration-receipt-row strong { color: var(--text); font: 11px var(--mono); }
+    .celebration-receipt-row.bonus { color: var(--lime); }
+    .celebration-receipt-row.bonus strong { color: var(--lime); }
+    .celebration-receipt-row.balance { margin: 2px -10px 0; padding: 13px 10px; background: rgba(216,243,106,.1); color: var(--text); }
+    .celebration-receipt-row.balance strong { color: var(--lime); font-size: 16px; }
+    .celebration-actions { display: grid; gap: 10px; margin-top: 18px; }
+    .celebration-actions .primary-btn { padding: 14px 18px; }
+    .celebration-collection-link { color: var(--muted); text-align: center; font-size: 11px; text-underline-offset: 4px; }
+    .celebration-collection-link:hover { color: var(--lime); }
+    .celebration-footnote { margin: 13px 0 0; color: var(--muted); font-size: 9px; line-height: 1.5; text-align: center; }
+    @keyframes happy-pop { from { opacity: 0; transform: scale(.55) rotate(-18deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+    @keyframes confetti-fall { 0% { opacity: 0; transform: translateY(0) rotate(0); } 12% { opacity: 1; } 100% { opacity: 0; transform: translateY(250px) rotate(460deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .celebration-spark, .celebration-confetti i { animation: none; }
+    }
     .toast { position: fixed; z-index: 20; bottom: 22px; left: 50%; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--text); color: var(--bg); padding: 12px 18px; font-size: 12px; transition: .25s; box-shadow: 0 4px 25px rgba(0,0,0,.25); }
     .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 
@@ -258,6 +299,10 @@
       .detail-copy h1 { font-size: 43px; }
       .detail-actions { align-items: stretch; flex-direction: column; }
       .detail-actions .primary-btn { width: 100%; }
+      .celebration-modal { width: 100%; }
+      .celebration-body { padding: 18px 18px 22px; }
+      .celebration-top { min-height: 200px; }
+      .celebration-receipt-row { font-size: 10px; }
       .missions-wrap { padding: 28px 20px; grid-template-columns: 1fr; gap: 25px; }
       .mission { padding: 14px 11px; }
       .mission-title { font-size: 11px; }
@@ -388,6 +433,35 @@
         <button class="shortfall-link" id="openMissionsFromCheckout">Abrir janela de missões →</button>
       </div>
       <div class="cart-hint">Nenhum pagamento real será solicitado. Compras simuladas não têm valor monetário.</div>
+    </div>
+  </div>
+  <div class="overlay celebration-overlay" id="celebrationOverlay" role="dialog" aria-modal="true" aria-labelledby="celebrationTitle" aria-describedby="celebrationSubtitle" hidden>
+    <div class="modal celebration-modal">
+      <button class="modal-close celebration-close" id="closeCelebration" aria-label="Fechar confirmação da compra">×</button>
+      <div class="celebration-top">
+        <div class="celebration-confetti" aria-hidden="true">
+          <i style="--x:8%;--delay:0s;--confetti:#f5a6bb"></i><i style="--x:18%;--delay:.7s;--confetti:#f6a674"></i><i style="--x:29%;--delay:.2s;--confetti:#fff"></i><i style="--x:41%;--delay:1.1s;--confetti:#a8cbd5"></i><i style="--x:54%;--delay:.4s;--confetti:#f5a6bb"></i><i style="--x:66%;--delay:.9s;--confetti:#f6a674"></i><i style="--x:77%;--delay:.1s;--confetti:#fff"></i><i style="--x:91%;--delay:.6s;--confetti:#a8cbd5"></i>
+        </div>
+        <div class="celebration-message">
+          <div class="celebration-spark" id="celebrationSpark" aria-hidden="true">✳</div>
+          <div class="celebration-kicker">uma conquista toda sua</div>
+          <h3 class="celebration-title" id="celebrationTitle">Você juntou. Você escolheu.</h3>
+          <p class="celebration-subtitle" id="celebrationSubtitle">Sua compra imaginária foi concluída!</p>
+        </div>
+      </div>
+      <div class="celebration-body">
+        <div class="celebration-items" id="celebrationItems"></div>
+        <div class="celebration-receipt">
+          <div class="celebration-receipt-row"><span>Moedas que você juntou</span><strong id="celebrationSpent">−0 ✳</strong></div>
+          <div class="celebration-receipt-row bonus" id="celebrationBonusRow" hidden><span id="celebrationBonusLabel">Coleção completa!</span><strong id="celebrationBonus">+0 ✳</strong></div>
+          <div class="celebration-receipt-row balance"><span>Saldo que fica com você</span><strong id="celebrationBalance">0 ✳</strong></div>
+        </div>
+        <div class="celebration-actions">
+          <button class="primary-btn" id="continueShopping">Continuar explorando ✳</button>
+          <a class="celebration-collection-link" id="viewCollection" href="#colecao">Ver minha coleção →</a>
+        </div>
+        <p class="celebration-footnote">Uma conquista virtual, só sua. Nenhum pagamento, envio ou compra real aconteceu.</p>
+      </div>
     </div>
   </div>
   <div class="overlay" id="missionsOverlay" role="dialog" aria-modal="true" aria-labelledby="missionsModalTitle">
@@ -820,10 +894,12 @@
     }
 
     async function checkout() {
-      const total = state.cart.reduce((sum, id) => {
-        const product = products.find(item => item.id === id);
-        return sum + (product ? product.price : 0);
-      }, 0);
+      const purchasedProducts = state.cart.map(id => products.find(item => item.id === id));
+      if (purchasedProducts.some(product => !product)) {
+        showToast("A sacola contém um item indisponível. Remova-o e tente novamente.");
+        return;
+      }
+      const total = purchasedProducts.reduce((sum, product) => sum + product.price, 0);
       if (!total) {
         showToast("Sua sacola está vazia.");
         return;
@@ -835,13 +911,65 @@
       }
       const result = await callRpc("quero_checkout");
       if (!result.ok) return;
-      if (!await refreshStoreState()) return;
-      document.getElementById("cartOverlay").classList.remove("open");
-      if (result.data.completed_categories.length) {
-        showToast(`Compra concluída! Categoria completa: ${result.data.completed_categories.join(", ")}. +${result.data.reward} moedas ✳`);
+      if (
+        !result.data ||
+        !Number.isInteger(result.data.spent) ||
+        !Number.isInteger(result.data.reward) ||
+        !Number.isInteger(result.data.balance) ||
+        !Array.isArray(result.data.completed_categories)
+      ) {
+        console.error("Supabase quero_checkout returned an invalid receipt:", result.data);
+        showToast("A compra foi processada, mas não foi possível carregar o comprovante. Atualize a página para conferir sua coleção.");
         return;
       }
-      showToast(`Compra imaginária concluída! ${result.data.spent} moedas virtuais usadas. ✳`);
+      if (!await refreshStoreState()) {
+        showToast("Sua compra foi processada. Recarregue a página para conferir o saldo e a coleção.");
+        return;
+      }
+      document.getElementById("cartOverlay").classList.remove("open");
+      showPurchaseCelebration(purchasedProducts, result.data);
+    }
+
+    function showPurchaseCelebration(purchasedProducts, receipt) {
+      const items = document.getElementById("celebrationItems");
+      items.innerHTML = purchasedProducts.map(product => `
+        <div class="celebration-item">
+          <div class="celebration-item-art" style="background:${product.color}" aria-hidden="true">${product.emoji}</div>
+          <div class="celebration-item-copy"><div class="celebration-item-name">${product.name}</div><div class="celebration-item-category">${product.category}</div></div>
+          <span class="celebration-item-price">−${product.price} ✳</span>
+        </div>
+      `).join("");
+
+      const completedCategories = receipt.completed_categories;
+      const completedNames = completedCategories.join(", ");
+      const completedCollection = completedCategories.length > 0;
+      document.getElementById("celebrationSpark").textContent = completedCollection ? "✿" : "✳";
+      document.getElementById("celebrationTitle").textContent = completedCollection
+        ? "Coleção completa!"
+        : "Você juntou. Você escolheu.";
+      document.getElementById("celebrationSubtitle").textContent = completedCollection
+        ? `Você completou ${completedNames} e desbloqueou uma recompensa especial.`
+        : purchasedProducts.length === 1
+          ? "Uma coisinha escolhida por você agora faz parte da sua coleção."
+          : "As coisinhas escolhidas por você agora fazem parte da sua coleção.";
+      document.getElementById("celebrationSpent").textContent = `−${receipt.spent} ✳`;
+      document.getElementById("celebrationBonusRow").hidden = receipt.reward === 0;
+      document.getElementById("celebrationBonusLabel").textContent = completedNames
+        ? `Bônus da coleção · ${completedNames}`
+        : "Bônus da coleção";
+      document.getElementById("celebrationBonus").textContent = `+${receipt.reward} ✳`;
+      document.getElementById("celebrationBalance").textContent = `${receipt.balance} ✳`;
+
+      const overlay = document.getElementById("celebrationOverlay");
+      overlay.hidden = false;
+      overlay.classList.add("open");
+      document.getElementById("continueShopping").focus();
+    }
+
+    function closePurchaseCelebration() {
+      const overlay = document.getElementById("celebrationOverlay");
+      overlay.classList.remove("open");
+      overlay.hidden = true;
     }
 
     function openLogin(mode = "login") {
@@ -915,6 +1043,15 @@
       if (event.target.id === "cartOverlay") document.getElementById("cartOverlay").classList.remove("open");
     });
     document.getElementById("checkoutButton").addEventListener("click", checkout);
+    document.getElementById("closeCelebration").addEventListener("click", closePurchaseCelebration);
+    document.getElementById("continueShopping").addEventListener("click", () => {
+      closePurchaseCelebration();
+      document.getElementById("loja").scrollIntoView({ behavior: "smooth" });
+    });
+    document.getElementById("viewCollection").addEventListener("click", closePurchaseCelebration);
+    document.getElementById("celebrationOverlay").addEventListener("click", event => {
+      if (event.target.id === "celebrationOverlay") closePurchaseCelebration();
+    });
     document.getElementById("closeModal").addEventListener("click", closeLogin);
     document.getElementById("loginOverlay").addEventListener("click", event => {
       if (event.target.id === "loginOverlay") closeLogin();
@@ -925,7 +1062,15 @@
     });
     document.addEventListener("keydown", event => {
       if (event.key === "Escape") {
-        closeLogin();
+        if (document.getElementById("loginOverlay").classList.contains("open")) {
+          closeLogin();
+          return;
+        }
+        const celebrationOverlay = document.getElementById("celebrationOverlay");
+        if (celebrationOverlay.classList.contains("open")) {
+          closePurchaseCelebration();
+          return;
+        }
         const adOverlay = document.getElementById("adOverlay");
         if (adOverlay.classList.contains("open")) {
           closeAd();
