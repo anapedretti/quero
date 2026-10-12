@@ -5,16 +5,39 @@ create table if not exists public.quero_products (
   price integer not null check (price > 0)
 );
 
-insert into public.quero_products (id, name, category, price) values
-  (1, 'Caneca de outro planeta', 'Casa & aconchego', 120),
-  (2, 'Meias de domingo', 'Estilo próprio', 85),
-  (3, 'Vasinho quase zen', 'Casa & aconchego', 160),
-  (4, 'Fone modo avião', 'Tech & ideias', 240),
-  (5, 'Caderno de grandes planos', 'Papel & pausa', 95),
-  (6, 'Luminária fim de tarde', 'Casa & aconchego', 210),
-  (7, 'Adesivos muito você', 'Papel & pausa', 55),
-  (8, 'Câmera de boas memórias', 'Tech & ideias', 320)
-on conflict (id) do nothing;
+do $seed_products$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'quero_products'
+      and column_name = 'category_id'
+  ) then
+    insert into public.quero_products (id, name, category, price, category_id) values
+      (1, 'Caneca de outro planeta', 'Casa & aconchego', 120, 'casa-aconchego'),
+      (2, 'Meias de domingo', 'Estilo próprio', 85, 'estilo-proprio'),
+      (3, 'Vasinho quase zen', 'Casa & aconchego', 160, 'casa-aconchego'),
+      (4, 'Fone modo avião', 'Tech & ideias', 240, 'tech-ideias'),
+      (5, 'Caderno de grandes planos', 'Papel & pausa', 95, 'papel-pausa'),
+      (6, 'Luminária fim de tarde', 'Casa & aconchego', 210, 'casa-aconchego'),
+      (7, 'Adesivos muito você', 'Papel & pausa', 55, 'papel-pausa'),
+      (8, 'Câmera de boas memórias', 'Tech & ideias', 320, 'tech-ideias')
+    on conflict (id) do nothing;
+  else
+    insert into public.quero_products (id, name, category, price) values
+      (1, 'Caneca de outro planeta', 'Casa & aconchego', 120),
+      (2, 'Meias de domingo', 'Estilo próprio', 85),
+      (3, 'Vasinho quase zen', 'Casa & aconchego', 160),
+      (4, 'Fone modo avião', 'Tech & ideias', 240),
+      (5, 'Caderno de grandes planos', 'Papel & pausa', 95),
+      (6, 'Luminária fim de tarde', 'Casa & aconchego', 210),
+      (7, 'Adesivos muito você', 'Papel & pausa', 55),
+      (8, 'Câmera de boas memórias', 'Tech & ideias', 320)
+    on conflict (id) do nothing;
+  end if;
+end;
+$seed_products$;
 
 create table if not exists public.quero_user_state (
   user_id uuid primary key references auth.users (id) on delete cascade,

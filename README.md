@@ -9,6 +9,7 @@ Loja de demonstração em que as compras usam apenas moedas virtuais; não há p
    - [`supabase/migrations/20261012000100_quero_account_management.sql`](./supabase/migrations/20261012000100_quero_account_management.sql), para edição do perfil e cancelamento da conta;
    - [`supabase/migrations/20261013000100_quero_admin.sql`](./supabase/migrations/20261013000100_quero_admin.sql), para o painel, papéis de acesso e catálogo configurável;
    - [`supabase/migrations/20261014000100_quero_mission_recurrence.sql`](./supabase/migrations/20261014000100_quero_mission_recurrence.sql), para recorrência e histórico de resgates de missões.
+   Em um projeto que já tenha recebido alguma migração, execute apenas as migrações que ainda não foram aplicadas, sempre respeitando essa ordem; não é necessário reexecutar as anteriores.
 2. No painel, em **Authentication → URL Configuration**, configure a URL publicada do site como **Site URL** e inclua também em **Redirect URLs**:
    - `http://localhost:8000/**` para desenvolvimento local;
    - a URL do GitHub Pages, por exemplo `https://<usuario>.github.io/<repositorio>/**`.
