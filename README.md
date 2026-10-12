@@ -7,7 +7,8 @@ Loja de demonstração em que as compras usam apenas moedas virtuais; não há p
 1. No painel do Supabase, abra **SQL Editor** e execute, nessa ordem:
    - [`supabase/migrations/20261011000100_quero_store.sql`](./supabase/migrations/20261011000100_quero_store.sql);
    - [`supabase/migrations/20261012000100_quero_account_management.sql`](./supabase/migrations/20261012000100_quero_account_management.sql), para edição do perfil e cancelamento da conta;
-   - [`supabase/migrations/20261013000100_quero_admin.sql`](./supabase/migrations/20261013000100_quero_admin.sql), para o painel, papéis de acesso e catálogo configurável.
+   - [`supabase/migrations/20261013000100_quero_admin.sql`](./supabase/migrations/20261013000100_quero_admin.sql), para o painel, papéis de acesso e catálogo configurável;
+   - [`supabase/migrations/20261014000100_quero_mission_recurrence.sql`](./supabase/migrations/20261014000100_quero_mission_recurrence.sql), para recorrência e histórico de resgates de missões.
 2. No painel, em **Authentication → URL Configuration**, configure a URL publicada do site como **Site URL** e inclua também em **Redirect URLs**:
    - `http://localhost:8000/**` para desenvolvimento local;
    - a URL do GitHub Pages, por exemplo `https://<usuario>.github.io/<repositorio>/**`.
@@ -36,6 +37,8 @@ Para liberar a primeira conta administradora:
 3. Abra `admin.html` no endereço publicado e entre com essa conta. Para adicionar editores pelo painel, cada pessoa deve primeiro criar uma conta na loja; depois, informe o e-mail dessa conta na seção **Editores**. Editores podem gerenciar categorias, produtos, missões e pontuação, mas apenas administradores podem conceder ou remover esse acesso.
 
 Produtos, categorias e missões arquivados deixam de aparecer para novas interações, mas seus registros e o histórico de coleção não são apagados. O painel altera recompensas futuras; moedas já recebidas não são recalculadas.
+
+As missões podem ser configuradas para resgate único, diário, semanal ou mensal. Os períodos seguem o horário de Brasília (`America/Sao_Paulo`); a semana começa na segunda-feira. Cada resgate aprovado abre uma comemoração animada e o crédito é validado no banco.
 
 ## Executar localmente
 

@@ -80,7 +80,7 @@
       <section id="loginView" class="panel login-panel">
         <div class="eyebrow">área privada</div>
         <h1>Administração.</h1>
-        <p>Entre com sua conta quero. de administrador ou editor. O acesso e as alterações são validados pelo Supabase.</p>
+        <p>Entre com sua conta quero. de administrador ou editor. O acesso e as alterações são verificados com segurança.</p>
         <form id="loginForm">
           <div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required></div>
           <div class="field" style="margin-top:14px"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required></div>
@@ -100,7 +100,7 @@
       <section id="dashboard" hidden>
         <div class="eyebrow">administração da loja</div>
         <h1>Gerencie a experiência.</h1>
-        <p class="lead">Cadastros e regras são atualizados no Supabase e passam a valer para todas as pessoas usuárias.</p>
+        <p class="lead">Cadastros e regras são salvos e passam a valer para todas as pessoas usuárias.</p>
         <div id="dashboardNotice" class="notice" role="status" aria-live="polite" hidden></div>
         <nav class="admin-nav" aria-label="Seções administrativas">
           <a href="#categorias">Categorias</a><a href="#produtos">Produtos</a>
@@ -152,6 +152,9 @@
               <div class="field full"><label for="missionRequirement">Regra para resgatar</label>
                 <select id="missionRequirement"><option value="open">Resgate disponível</option><option value="profile">Exige apelido preenchido</option><option value="cart">Exige item na sacola</option></select>
               </div>
+              <div class="field full"><label for="missionRecurrence">Recorrência da recompensa</label>
+                <select id="missionRecurrence"><option value="once">Uma vez só</option><option value="daily">Diariamente</option><option value="weekly">Semanalmente</option><option value="monthly">Mensalmente</option></select>
+              </div>
             </div>
             <button class="primary-btn" type="submit">Salvar missão</button>
             <button class="secondary-btn" type="button" data-reset="missionForm">Limpar</button>
@@ -197,6 +200,12 @@
     const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[character]);
+    const recurrenceLabels = {
+      once: "Uma vez só",
+      daily: "Diariamente",
+      weekly: "Semanalmente",
+      monthly: "Mensalmente"
+    };
 
     function notice(element, message, type = "") {
       element.textContent = message;
@@ -324,7 +333,7 @@
     function renderMissions() {
       $("missionList").innerHTML = data.missions.length ? data.missions.map(item => `
         <div class="item-row">
-          <div><div class="item-title">${escapeHtml(item.icon)} ${escapeHtml(item.title)} · +${item.reward} ✳</div><div class="item-meta">${escapeHtml(item.detail)} · ${item.requirement} · ${item.is_active ? "ativa" : "arquivada"}</div></div>
+          <div><div class="item-title">${escapeHtml(item.icon)} ${escapeHtml(item.title)} · +${item.reward} ✳</div><div class="item-meta">${escapeHtml(item.detail)} · ${item.requirement} · ${escapeHtml(recurrenceLabels[item.recurrence] || recurrenceLabels.once)} · ${item.is_active ? "ativa" : "arquivada"}</div></div>
           <div class="item-actions">
             <button class="action-btn" data-mission-edit="${escapeHtml(item.id)}">Editar</button>
             <button class="action-btn ${item.is_active ? "danger" : ""}" data-mission-active="${escapeHtml(item.id)}" data-active="${item.is_active}">${item.is_active ? "Arquivar" : "Reativar"}</button>
@@ -339,6 +348,7 @@
         $("missionDetail").value = mission.detail;
         $("missionReward").value = mission.reward;
         $("missionRequirement").value = mission.requirement;
+        $("missionRecurrence").value = mission.recurrence || "once";
         $("missoes").scrollIntoView({ behavior: "smooth" });
       }));
       $("missionList").querySelectorAll("[data-mission-active]").forEach(button => button.addEventListener("click", () => {
@@ -449,7 +459,8 @@
           p_title: $("missionTitle").value.trim(),
           p_detail: $("missionDetail").value.trim(),
           p_reward: Number($("missionReward").value),
-          p_requirement: $("missionRequirement").value
+          p_requirement: $("missionRequirement").value,
+          p_recurrence: $("missionRecurrence").value
         });
         resetForm("missionForm");
         await refreshDashboard("Missão salva.");

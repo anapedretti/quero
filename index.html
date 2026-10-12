@@ -177,6 +177,7 @@
     .mission-icon { font-size: 21px; }
     .mission-title { font-size: 12px; font-weight: 700; }
     .mission-detail { font-size: 10px; margin-top: 4px; color: #565c3c; }
+    .mission-frequency { margin-top: 5px; color: #565c3c; font: 9px var(--mono); text-transform: uppercase; }
     .mission-reward { text-align: right; white-space: nowrap; }
     .mission-coins { font: 11px var(--mono); font-weight: 500; }
     .mission-action { display: block; border: 0; background: none; color: #565c3c; font: 10px var(--mono); margin: 5px 0 0 auto; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
@@ -244,6 +245,12 @@
     .cart-empty { color: var(--muted); font-size: 12px; text-align: center; padding: 22px 0; }
     .cart-hint { color: var(--muted); font-size: 10px; text-align: center; margin-top: 12px; line-height: 1.5; }
     .celebration-overlay { z-index: 11; overflow-y: auto; }
+    .mission-celebration-overlay { z-index: 13; }
+    .mission-celebration-modal { width: min(480px, 100%); }
+    .mission-celebration-body { padding: 24px 26px 26px; text-align: center; }
+    .mission-celebration-body p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .mission-celebration-reward { margin: 16px 0 6px; color: var(--lime); font: 600 30px var(--display); }
+    .mission-celebration-body .primary-btn { width: 100%; margin-top: 20px; }
     .celebration-modal { width: min(540px, 100%); padding: 0; overflow: hidden; border: 1px solid rgba(216,243,106,.38); background: var(--surface); }
     .celebration-close { z-index: 2; color: #565c3c; }
     .celebration-top { position: relative; min-height: 215px; display: grid; place-items: center; overflow: hidden; background: var(--lime); color: #191a12; text-align: center; }
@@ -432,12 +439,12 @@
           <div class="faq-list">
             <details><summary>O quero. vende produtos de verdade?</summary><p>Não. O quero. é uma experiência de demonstração. Os produtos, a sacola e as compras são virtuais: não há venda, pagamento, entrega ou transação com dinheiro real.</p></details>
             <details><summary>O que são as moedas virtuais?</summary><p>São pontos sem valor monetário que você pode juntar ao completar missões e usar para simular compras dentro do site. Não podem ser compradas, sacadas ou trocadas por dinheiro.</p></details>
-            <details><summary>Como ganho moedas?</summary><p>Entre na sua conta e complete as missões disponíveis na página inicial. Seu saldo e seu progresso ficam associados à sua conta.</p></details>
+            <details><summary>Como ganho moedas?</summary><p>Entre na sua conta e complete as missões disponíveis na página inicial. Algumas podem ser resgatadas uma vez só; outras ficam disponíveis novamente todos os dias, semanas ou meses. Seu saldo e seu progresso ficam associados à sua conta.</p></details>
             <details><summary>Para que serve minha coleção?</summary><p>Ela guarda os produtos que você escolheu na simulação. Ao completar uma categoria, você recebe uma recompensa de moedas virtuais, uma única vez por categoria.</p></details>
-            <details><summary>Quais dados ficam salvos?</summary><p>O site guarda seu e-mail de acesso, apelido e progresso da experiência (saldo, missões, sacola e coleção) no Supabase. Você pode cancelar sua conta e apagar esses dados na área Minha conta.</p></details>
+            <details><summary>Quais dados ficam salvos?</summary><p>Para guardar seu progresso, salvamos seu e-mail, apelido, saldo, missões, sacola e coleção. Você pode cancelar sua conta e apagar esses dados a qualquer momento na área Minha conta.</p></details>
           </div>
           <section class="section" id="sobre" style="padding-left:0;padding-right:0;padding-bottom:0">
-            <div class="note-bar"><span>♡</span><span><strong>Importante:</strong> sua conta e seu progresso são salvos no Supabase. A sacola e as compras continuam sendo apenas virtuais: não há checkout monetário, entrega, cartão ou dinheiro real envolvidos.</span></div>
+            <div class="note-bar"><span>♡</span><span><strong>Importante:</strong> sua conta e seu progresso ficam salvos para você continuar de onde parou. A sacola e as compras são apenas virtuais: não há pagamento, entrega, cartão ou dinheiro real envolvidos.</span></div>
           </section>
         </section>
       </section>
@@ -459,7 +466,7 @@
               <input id="profileName" name="displayName" maxlength="24" autocomplete="nickname" required>
               <label for="profileEmail">E-mail da conta</label>
               <input id="profileEmail" name="email" type="email" autocomplete="email" required>
-              <p class="profile-note">Se você alterar o e-mail, o Supabase pode solicitar a confirmação do novo endereço antes de aplicá-lo.</p>
+              <p class="profile-note">Se você alterar o e-mail, enviaremos uma confirmação para o novo endereço antes de atualizar seus dados.</p>
               <button class="primary-btn" type="submit">Salvar dados pessoais</button>
             </form>
             <section class="section" id="colecao">
@@ -500,7 +507,7 @@
         <button class="primary-btn" id="authSubmit" type="submit">Entrar ✳</button>
       </form>
       <button class="text-btn auth-toggle" id="authModeToggle" type="button">Ainda não tem conta? Criar conta</button>
-      <div class="modal-footnote">A senha é gerenciada com segurança pelo Supabase.</div>
+      <div class="modal-footnote">Sua senha é protegida com segurança.</div>
     </div>
   </div>
   <div class="overlay" id="cartOverlay" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
@@ -544,6 +551,27 @@
           <a class="celebration-collection-link" id="viewCollection" href="#usuario">Ver minha coleção →</a>
         </div>
         <p class="celebration-footnote">Uma conquista virtual, só sua. Nenhum pagamento, envio ou compra real aconteceu.</p>
+      </div>
+    </div>
+  </div>
+  <div class="overlay celebration-overlay mission-celebration-overlay" id="missionCelebrationOverlay" role="dialog" aria-modal="true" aria-labelledby="missionCelebrationTitle" aria-describedby="missionCelebrationSubtitle" hidden>
+    <div class="modal celebration-modal mission-celebration-modal">
+      <button class="modal-close celebration-close" id="closeMissionCelebration" aria-label="Fechar comemoração">×</button>
+      <div class="celebration-top">
+        <div class="celebration-confetti" aria-hidden="true">
+          <i style="--x:8%;--delay:0s;--confetti:#f5a6bb"></i><i style="--x:18%;--delay:.7s;--confetti:#f6a674"></i><i style="--x:29%;--delay:.2s;--confetti:#fff"></i><i style="--x:41%;--delay:1.1s;--confetti:#a8cbd5"></i><i style="--x:54%;--delay:.4s;--confetti:#f5a6bb"></i><i style="--x:66%;--delay:.9s;--confetti:#f6a674"></i><i style="--x:77%;--delay:.1s;--confetti:#fff"></i><i style="--x:91%;--delay:.6s;--confetti:#a8cbd5"></i>
+        </div>
+        <div class="celebration-message">
+          <div class="celebration-spark" aria-hidden="true">✳</div>
+          <div class="celebration-kicker">mais uma conquista sua</div>
+          <h3 class="celebration-title" id="missionCelebrationTitle">Missão resgatada!</h3>
+          <p class="celebration-subtitle" id="missionCelebrationSubtitle"></p>
+        </div>
+      </div>
+      <div class="mission-celebration-body">
+        <div class="mission-celebration-reward" id="missionCelebrationReward"></div>
+        <p id="missionCelebrationBalance"></p>
+        <button class="primary-btn" id="continueMissionCelebration" type="button">Continuar ✳</button>
       </div>
     </div>
   </div>
@@ -597,11 +625,19 @@
       collectionRewards: [],
       adAvailableAt: null
     };
+    const recurrenceLabels = {
+      once: "Resgate único",
+      daily: "Disponível diariamente",
+      weekly: "Disponível semanalmente",
+      monthly: "Disponível mensalmente"
+    };
+    const missionTimeZone = "America/Sao_Paulo";
     let state = { ...defaultState };
     let authSession = null;
     let authMode = "login";
     let activeCategory = "Tudo";
     let toastTimer;
+    let missionRefreshTimer;
     let adTimer;
     let adSecondsRemaining = 5;
     let adInProgress = false;
@@ -620,7 +656,7 @@
       } else if (message.includes("available after")) {
         showToast(`Esta recompensa já foi resgatada. Tente novamente em ${storeSettings.demo_cooldown_minutes} minutos.`);
       } else if (message.includes("already claimed")) {
-        showToast("Esta missão já foi resgatada.");
+        showToast("Esta missão já foi resgatada neste período.");
       } else if (message.includes("already in your cart")) {
         showToast("Este item já está na sua sacola.");
       } else if (message.includes("already in your collection")) {
@@ -630,7 +666,7 @@
       } else if (message.includes("already registered")) {
         showToast("Este e-mail já tem uma conta. Entre nela.");
       } else if (message.includes("Password should be")) {
-        showToast("A senha não atende aos requisitos do Supabase.");
+        showToast("A senha não atende aos requisitos de segurança.");
       } else if (message.includes("not enough") || message.includes("not found") || message.includes("not registered")) {
         showToast("Não foi possível concluir: confira os dados e tente novamente.");
       } else {
@@ -926,7 +962,7 @@
       const markup = missions.filter(mission => mission.is_active !== false).map(mission => {
         const complete = state.completed.includes(mission.id);
         return `<div class="mission">
-          <div class="mission-info"><span class="mission-icon">${escapeHtml(mission.icon)}</span><div><div class="mission-title">${escapeHtml(mission.title)}</div><div class="mission-detail">${escapeHtml(mission.detail)}</div></div></div>
+          <div class="mission-info"><span class="mission-icon">${escapeHtml(mission.icon)}</span><div><div class="mission-title">${escapeHtml(mission.title)}</div><div class="mission-detail">${escapeHtml(mission.detail)}</div><div class="mission-frequency">${escapeHtml(recurrenceLabels[mission.recurrence] || recurrenceLabels.once)}</div></div></div>
           <div class="mission-reward"><div class="mission-coins">+${mission.reward} ✳</div><button class="mission-action" data-mission="${escapeHtml(mission.id)}" ${complete || !authSession ? "disabled" : ""}>${complete ? "resgatada ✓" : !authSession ? "entre para resgatar" : "resgatar →"}</button></div>
         </div>`;
       }).join("");
@@ -939,7 +975,7 @@
           : "";
         const adOption = !authSession ? `
           <div class="mission-empty-ad">
-            <div><strong>Entre na sua conta para juntar moedas.</strong><p>Suas missões e seu saldo ficam salvos no Supabase.</p></div>
+            <div><strong>Entre na sua conta para juntar moedas.</strong><p>Suas missões e seu saldo ficam guardados para você.</p></div>
             <button class="primary-btn" data-open-login>Entrar ou criar conta</button>
           </div>` : available ? "" : `
           <div class="mission-empty-ad">
@@ -951,6 +987,53 @@
         container.querySelectorAll("[data-watch-ad]").forEach(button => button.addEventListener("click", startAd));
         container.querySelectorAll("[data-open-login]").forEach(button => button.addEventListener("click", () => openLogin("login")));
       });
+      scheduleMissionRefresh();
+    }
+
+    function scheduleMissionRefresh() {
+      clearTimeout(missionRefreshTimer);
+      if (!authSession) return;
+      const claimedRecurringMissions = missions.filter(mission =>
+        mission.recurrence !== "once" && state.completed.includes(mission.id)
+      );
+      if (!claimedRecurringMissions.length) return;
+
+      const now = new Date();
+      const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
+        timeZone: missionTimeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23"
+      }).formatToParts(now).map(part => [part.type, Number(part.value)]));
+      const localNow = new Date(Date.UTC(
+        parts.year, parts.month - 1, parts.day,
+        parts.hour, parts.minute, parts.second, now.getMilliseconds()
+      ));
+      const resetTimes = claimedRecurringMissions.map(mission => {
+        const next = new Date(localNow);
+        if (mission.recurrence === "daily") {
+          next.setUTCHours(24, 0, 0, 0);
+        } else if (mission.recurrence === "weekly") {
+          const daysUntilMonday = (8 - (localNow.getUTCDay() || 7)) % 7 || 7;
+          next.setUTCDate(next.getUTCDate() + daysUntilMonday);
+          next.setUTCHours(0, 0, 0, 0);
+        } else {
+          next.setUTCMonth(next.getUTCMonth() + 1, 1);
+          next.setUTCHours(0, 0, 0, 0);
+        }
+        return next.getTime();
+      });
+      const nextReset = Math.min(...resetTimes);
+      missionRefreshTimer = setTimeout(async () => {
+        missionRefreshTimer = undefined;
+        if (document.visibilityState === "visible" && authSession) {
+          await refreshStoreState();
+        }
+      }, Math.max(0, nextReset - Date.now() + 100));
     }
 
     function renderCollection() {
@@ -1021,10 +1104,27 @@
         return;
       }
       if (!await refreshStoreState()) return;
-      showToast(`Missão completa! +${result.data.reward} moedas virtuais ✳`);
+      openMissionCelebration(mission, result.data.reward);
       if (document.getElementById("missionsOverlay").classList.contains("open")) {
         document.getElementById("missionsModalList").scrollTop = document.getElementById("missionsModalList").scrollHeight;
       }
+    }
+
+    function openMissionCelebration(mission, reward) {
+      document.getElementById("missionCelebrationTitle").textContent = "Missão resgatada!";
+      document.getElementById("missionCelebrationSubtitle").textContent = mission.title;
+      document.getElementById("missionCelebrationReward").textContent = `+${reward} moedas virtuais ✳`;
+      document.getElementById("missionCelebrationBalance").textContent = `Seu saldo agora é de ${state.balance} moedas.`;
+      const overlay = document.getElementById("missionCelebrationOverlay");
+      overlay.hidden = false;
+      overlay.classList.add("open");
+      document.getElementById("closeMissionCelebration").focus();
+    }
+
+    function closeMissionCelebration() {
+      const overlay = document.getElementById("missionCelebrationOverlay");
+      overlay.classList.remove("open");
+      overlay.hidden = true;
     }
 
     function startAd() {
@@ -1298,6 +1398,11 @@
     document.getElementById("celebrationOverlay").addEventListener("click", event => {
       if (event.target.id === "celebrationOverlay") closePurchaseCelebration();
     });
+    document.getElementById("closeMissionCelebration").addEventListener("click", closeMissionCelebration);
+    document.getElementById("continueMissionCelebration").addEventListener("click", closeMissionCelebration);
+    document.getElementById("missionCelebrationOverlay").addEventListener("click", event => {
+      if (event.target.id === "missionCelebrationOverlay") closeMissionCelebration();
+    });
     document.getElementById("closeModal").addEventListener("click", closeLogin);
     document.getElementById("loginOverlay").addEventListener("click", event => {
       if (event.target.id === "loginOverlay") closeLogin();
@@ -1308,6 +1413,11 @@
     });
     document.addEventListener("keydown", event => {
       if (event.key === "Escape") {
+        const missionCelebrationOverlay = document.getElementById("missionCelebrationOverlay");
+        if (missionCelebrationOverlay.classList.contains("open")) {
+          closeMissionCelebration();
+          return;
+        }
         if (document.getElementById("loginOverlay").classList.contains("open")) {
           closeLogin();
           return;
@@ -1400,6 +1510,10 @@
     document.addEventListener("visibilitychange", async () => {
       if (document.visibilityState !== "visible") return;
       if (!await loadPublicCatalog()) return;
+      if (authSession) {
+        if (!await refreshStoreState()) return;
+        return;
+      }
       if (!categories.includes(activeCategory)) activeCategory = "Tudo";
       renderCategories();
       renderProducts();
