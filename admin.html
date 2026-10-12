@@ -108,7 +108,7 @@
         <p class="lead">Cadastros e regras são salvos e passam a valer para todas as pessoas usuárias.</p>
         <div id="dashboardNotice" class="notice" role="status" aria-live="polite" hidden></div>
         <nav class="admin-nav" aria-label="Seções administrativas">
-          <a href="#categorias">Categorias</a><a href="#produtos">Produtos</a>
+          <a href="#categorias">Categorias</a><a href="#produtos">Produtos</a><a href="#caixas">Caixas-surpresa</a>
           <a href="#missoes">Missões</a><a href="#pontuacao">Pontuação</a>
           <a href="#editores" id="editorsNav" hidden>Editores</a>
         </nav>
@@ -135,7 +135,28 @@
               <div class="field"><label for="productCategory">Categoria</label><select id="productCategory" required></select></div>
               <div class="field"><label for="productPrice">Preço em moedas</label><input id="productPrice" type="number" min="1" max="1000000" step="1" required></div>
               <div class="field"><label for="productOfferPrice">Preço de oferta (opcional)</label><input id="productOfferPrice" type="number" min="1" max="1000000" step="1" placeholder="Menor que o preço normal"></div>
-              <div class="field"><label for="productEmoji">Ícone (emoji)</label><input id="productEmoji" maxlength="16" value="✳" required></div>
+              <div class="field"><label for="productEmoji">Ícone (emoji)</label>
+                <select id="productEmoji" required>
+                  <option value="✳">✳ Estrela</option>
+                  <option value="☕">☕ Caneca</option>
+                  <option value="🧦">🧦 Meias</option>
+                  <option value="🪴">🪴 Planta</option>
+                  <option value="🎧">🎧 Fones</option>
+                  <option value="📔">📔 Caderno</option>
+                  <option value="💡">💡 Lâmpada</option>
+                  <option value="🌈">🌈 Arco-íris</option>
+                  <option value="📷">📷 Câmera</option>
+                  <option value="🎁">🎁 Presente</option>
+                  <option value="🕯️">🕯️ Vela</option>
+                  <option value="🧸">🧸 Ursinho</option>
+                  <option value="🌷">🌷 Flor</option>
+                  <option value="🍵">🍵 Chá</option>
+                  <option value="💎">💎 Cristal</option>
+                  <option value="🪄">🪄 Varinha</option>
+                  <option value="custom">Outro emoji…</option>
+                </select>
+                <input id="productEmojiCustom" maxlength="16" placeholder="Digite um emoji" aria-label="Emoji personalizado" hidden>
+              </div>
               <div class="field"><label for="productColor">Cor do card</label><input id="productColor" type="color" value="#d8f36a" required></div>
               <div class="field"><label for="productTag">Etiqueta</label><input id="productTag" maxlength="40" value="novidade"></div>
               <div class="field full"><label for="productDescription">Descrição</label><textarea id="productDescription" maxlength="1000"></textarea></div>
@@ -144,6 +165,30 @@
             <button class="secondary-btn" type="button" data-reset="productForm">Limpar</button>
           </form>
           <div class="item-list" id="productList"></div>
+        </section>
+
+        <section class="panel" id="caixas">
+          <div class="kicker">surpresas</div><h2>Caixas-surpresa</h2>
+          <p>O sorteio considera apenas produtos publicados e o preço atual de venda, incluindo ofertas. Produtos que a pessoa já possui também podem ser sorteados; nesses casos, o custo da caixa é devolvido.</p>
+          <form id="surpriseBoxForm">
+            <input id="surpriseBoxId" type="hidden">
+            <div class="form-grid">
+              <div class="field"><label for="surpriseBoxName">Nome da caixa</label><input id="surpriseBoxName" maxlength="100" required></div>
+              <div class="field"><label for="surpriseBoxPrice">Preço da caixa em moedas</label><input id="surpriseBoxPrice" type="number" min="1" max="1000000" step="1" required></div>
+              <div class="field"><label for="surpriseBoxCategory">Categoria dos produtos</label>
+                <select id="surpriseBoxCategory"><option value="">Todas as categorias</option></select>
+              </div>
+              <div class="field"><label for="surpriseBoxPriceFilter">Faixa de preço dos produtos</label>
+                <select id="surpriseBoxPriceFilter"><option value="all">Todas as faixas</option><option value="range">Definir faixa</option></select>
+              </div>
+              <div class="field surprise-box-range" hidden><label for="surpriseBoxMinPrice">Preço mínimo do produto</label><input id="surpriseBoxMinPrice" type="number" min="1" max="1000000" step="1" placeholder="Ex.: 100"></div>
+              <div class="field surprise-box-range" hidden><label for="surpriseBoxMaxPrice">Preço máximo do produto</label><input id="surpriseBoxMaxPrice" type="number" min="1" max="1000000" step="1" placeholder="Ex.: 300"></div>
+              <div class="field full"><label for="surpriseBoxDescription">Descrição</label><textarea id="surpriseBoxDescription" maxlength="500"></textarea></div>
+            </div>
+            <button class="primary-btn" type="submit">Salvar caixa</button>
+            <button class="secondary-btn" type="button" data-reset="surpriseBoxForm">Limpar</button>
+          </form>
+          <div class="item-list" id="surpriseBoxList"></div>
         </section>
 
         <section class="panel" id="missoes">
@@ -245,7 +290,7 @@
       if (!session) return showLogin();
       try {
         const result = await rpc("quero_admin_get_data");
-        if (!result || !Array.isArray(result.categories) || !Array.isArray(result.products) || !Array.isArray(result.missions) || !result.settings) {
+        if (!result || !Array.isArray(result.categories) || !Array.isArray(result.products) || !Array.isArray(result.surprise_boxes) || !Array.isArray(result.missions) || !result.settings) {
           throw new Error("O painel recebeu dados inválidos do servidor.");
         }
         data = result;
@@ -267,6 +312,7 @@
     function renderDashboard() {
       renderCategories();
       renderProducts();
+      renderSurpriseBoxes();
       renderMissions();
       $("collectionReward").value = data.settings.collection_reward;
       $("demoReward").value = data.settings.demo_reward;
@@ -276,9 +322,12 @@
 
     function renderCategories() {
       const active = data.categories.filter(item => item.is_active);
+      const selectedBoxCategory = $("surpriseBoxCategory").value;
       $("productCategory").innerHTML = active.length
         ? active.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("")
         : '<option value="">Crie uma categoria ativa primeiro</option>';
+      $("surpriseBoxCategory").innerHTML = `<option value="">Todas as categorias</option>${active.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("")}`;
+      $("surpriseBoxCategory").value = active.some(item => item.id === selectedBoxCategory) ? selectedBoxCategory : "";
       $("categoryList").innerHTML = data.categories.length ? data.categories.map(item => `
         <div class="item-row">
           <div><div class="item-title">${escapeHtml(item.name)}</div><div class="item-meta">${escapeHtml(item.id)} · ${item.is_active ? "ativa" : "arquivada"}</div></div>
@@ -320,7 +369,7 @@
         $("productCategory").value = product.category_id;
         $("productPrice").value = product.price;
         $("productOfferPrice").value = product.offer_price || "";
-        $("productEmoji").value = product.emoji;
+        setProductEmoji(product.emoji);
         $("productColor").value = product.color;
         $("productTag").value = product.tag;
         $("productDescription").value = product.description;
@@ -336,6 +385,69 @@
         });
       }));
     }
+
+    function renderSurpriseBoxes() {
+      $("surpriseBoxList").innerHTML = data.surprise_boxes.length ? data.surprise_boxes.map(item => `
+        <div class="item-row">
+          <div>
+            <div class="item-title">🎁 ${escapeHtml(item.name)} · ${item.price} ✳</div>
+            <div class="item-meta">${escapeHtml(item.category || "Todas as categorias")} · ${item.min_price === null ? "todas as faixas" : `${item.min_price}–${item.max_price} moedas`} · ${item.eligible_count} ${item.eligible_count === 1 ? "produto disponível" : "produtos disponíveis"} · ${item.is_active ? "publicada" : "arquivada"}</div>
+            ${item.description ? `<div class="item-meta">${escapeHtml(item.description)}</div>` : ""}
+          </div>
+          <div class="item-actions">
+            <button class="action-btn" data-surprise-box-edit="${item.id}">Editar</button>
+            <button class="action-btn ${item.is_active ? "danger" : ""}" data-surprise-box-active="${item.id}" data-active="${item.is_active}">${item.is_active ? "Arquivar" : "Reativar"}</button>
+          </div>
+        </div>`).join("") : '<div class="empty">Nenhuma caixa-surpresa cadastrada.</div>';
+      $("surpriseBoxList").querySelectorAll("[data-surprise-box-edit]").forEach(button => button.addEventListener("click", () => {
+        const box = data.surprise_boxes.find(item => item.id === Number(button.dataset.surpriseBoxEdit));
+        $("surpriseBoxId").value = box.id;
+        $("surpriseBoxName").value = box.name;
+        $("surpriseBoxPrice").value = box.price;
+        $("surpriseBoxCategory").value = box.category_id || "";
+        $("surpriseBoxPriceFilter").value = box.min_price === null ? "all" : "range";
+        $("surpriseBoxMinPrice").value = box.min_price ?? "";
+        $("surpriseBoxMaxPrice").value = box.max_price ?? "";
+        $("surpriseBoxDescription").value = box.description;
+        setSurpriseBoxPriceRange();
+        $("caixas").scrollIntoView({ behavior: "smooth" });
+      }));
+      $("surpriseBoxList").querySelectorAll("[data-surprise-box-active]").forEach(button => button.addEventListener("click", () => {
+        runAction(async () => {
+          await rpc("quero_admin_set_surprise_box_active", {
+            p_id: Number(button.dataset.surpriseBoxActive),
+            p_active: button.dataset.active !== "true"
+          });
+          await refreshDashboard("Caixa-surpresa atualizada.");
+        });
+      }));
+    }
+
+    function setSurpriseBoxPriceRange() {
+      const isRange = $("surpriseBoxPriceFilter").value === "range";
+      document.querySelectorAll(".surprise-box-range").forEach(field => { field.hidden = !isRange; });
+      $("surpriseBoxMinPrice").required = isRange;
+      $("surpriseBoxMaxPrice").required = isRange;
+    }
+
+    $("surpriseBoxPriceFilter").addEventListener("change", setSurpriseBoxPriceRange);
+
+    function setProductEmoji(emoji) {
+      const select = $("productEmoji");
+      const customInput = $("productEmojiCustom");
+      const hasPreset = [...select.options].some(option => option.value === emoji);
+      select.value = hasPreset ? emoji : "custom";
+      customInput.hidden = hasPreset;
+      customInput.required = !hasPreset;
+      customInput.value = hasPreset ? "" : emoji;
+    }
+
+    $("productEmoji").addEventListener("change", () => {
+      const custom = $("productEmoji").value === "custom";
+      $("productEmojiCustom").hidden = !custom;
+      $("productEmojiCustom").required = custom;
+      if (custom) $("productEmojiCustom").focus();
+    });
 
     function renderMissions() {
       $("missionList").innerHTML = data.missions.length ? data.missions.map(item => `
@@ -444,17 +556,40 @@
           p_category_id: $("productCategory").value,
           p_price: Number($("productPrice").value),
           p_offer_price: $("productOfferPrice").value ? Number($("productOfferPrice").value) : null,
-          p_emoji: $("productEmoji").value.trim(),
+          p_emoji: ($("productEmoji").value === "custom" ? $("productEmojiCustom").value : $("productEmoji").value).trim(),
           p_color: $("productColor").value,
           p_tag: $("productTag").value.trim(),
           p_description: $("productDescription").value.trim()
         });
         $("productForm").reset();
         $("productId").value = "";
-        $("productEmoji").value = "✳";
+        setProductEmoji("✳");
         $("productColor").value = "#d8f36a";
         $("productTag").value = "novidade";
         await refreshDashboard("Produto salvo.");
+      });
+    });
+
+    $("surpriseBoxForm").addEventListener("submit", event => {
+      event.preventDefault();
+      runAction(async () => {
+        const range = $("surpriseBoxPriceFilter").value === "range";
+        const minPrice = range ? Number($("surpriseBoxMinPrice").value) : null;
+        const maxPrice = range ? Number($("surpriseBoxMaxPrice").value) : null;
+        if (range && minPrice > maxPrice) throw new Error("o preço mínimo não pode ser maior que o preço máximo.");
+        await rpc("quero_admin_save_surprise_box", {
+          p_id: $("surpriseBoxId").value ? Number($("surpriseBoxId").value) : null,
+          p_name: $("surpriseBoxName").value.trim(),
+          p_description: $("surpriseBoxDescription").value.trim(),
+          p_price: Number($("surpriseBoxPrice").value),
+          p_category_id: $("surpriseBoxCategory").value || null,
+          p_min_price: minPrice,
+          p_max_price: maxPrice
+        });
+        $("surpriseBoxForm").reset();
+        $("surpriseBoxId").value = "";
+        setSurpriseBoxPriceRange();
+        await refreshDashboard("Caixa-surpresa salva.");
       });
     });
 
@@ -499,7 +634,14 @@
     function resetForm(id) {
       $(id).reset();
       if (id === "categoryForm") $("categoryId").value = "";
-      if (id === "productForm") $("productId").value = "";
+      if (id === "productForm") {
+        $("productId").value = "";
+        setProductEmoji("✳");
+      }
+      if (id === "surpriseBoxForm") {
+        $("surpriseBoxId").value = "";
+        setSurpriseBoxPriceRange();
+      }
       if (id === "missionForm") $("missionId").readOnly = false;
     }
 

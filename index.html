@@ -137,6 +137,26 @@
     .product-category { color: var(--muted); font-size: 12px; margin-top: 5px; }
     .product-price { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; color: var(--lime); font: 12px var(--mono); white-space: nowrap; }
     .original-price { color: var(--muted); font: 10px var(--mono); text-decoration: line-through; }
+    .surprise-box-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .surprise-box-card { min-width: 0; padding: 22px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+    .surprise-box-icon { display: grid; place-items: center; height: 130px; margin: -22px -22px 18px; overflow: hidden; background: var(--lime); font-size: 62px; }
+    .surprise-box-card h3 { margin: 0 0 8px; font: 500 21px var(--display); }
+    .surprise-box-description { min-height: 38px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .surprise-box-rules { margin: 12px 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .surprise-box-rules span { display: block; }
+    .surprise-box-buy { width: 100%; margin-top: 8px; }
+    .box-opening-modal { width: min(440px, 100%); overflow: hidden; text-align: center; }
+    .box-opening-art { display: grid; place-items: center; height: 190px; margin: -32px -32px 22px; background: var(--lime); font-size: 86px; }
+    .box-opening-art span { display: block; animation: box-suspense .7s ease-in-out infinite alternate; }
+    .box-opening-art.revealed span { animation: box-reveal .45s cubic-bezier(.2,1.5,.5,1) both; }
+    .box-opening-status { margin: 0 0 18px; font-size: 13px; }
+    .box-reveal { padding: 17px; background: var(--bg); border: 1px solid var(--line); }
+    .box-reveal h4 { margin: 0 0 6px; font: 500 21px var(--display); }
+    .box-reveal p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .box-refund-note { margin-top: 10px !important; color: var(--lime) !important; }
+    .box-opening-modal .primary-btn { width: 100%; }
+    @keyframes box-suspense { from { transform: rotate(-8deg) scale(.94); } to { transform: rotate(8deg) scale(1.06); } }
+    @keyframes box-reveal { from { opacity: .4; transform: scale(.35) rotate(-24deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
     .empty-state { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 50px 0; }
     .collection-intro { color: var(--muted); font-size: 12px; line-height: 1.7; max-width: 520px; margin: 14px 0 32px; }
     .collection-groups { display: grid; gap: 34px; }
@@ -325,6 +345,7 @@
       .hero { gap: 24px; }
       .hero-art { height: 275px; }
       .product-grid { grid-template-columns: repeat(2, 1fr); gap: 25px 13px; }
+      .surprise-box-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .category-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .product-image { height: 250px; }
       .home-category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -353,6 +374,7 @@
       .section { padding: 54px 0; }
       .section-heading { align-items: start; flex-direction: column; }
       .section-subtitle { max-width: 340px; }
+      .surprise-box-grid { grid-template-columns: 1fr; }
       .product-image { height: 190px; }
       .category-art { height: 140px; }
       .home-category-copy { min-height: 75px; align-items: flex-start; flex-direction: column; justify-content: center; padding: 12px; }
@@ -458,6 +480,13 @@
       <section class="page-view" id="productsPage" data-page="products" hidden>
         <section class="product-detail-page" id="productDetail" aria-live="polite" hidden></section>
         <section class="section" id="productsSection">
+          <section class="section" aria-labelledby="surpriseBoxesTitle" style="padding-top:0">
+            <div class="section-heading">
+              <div><div class="section-kicker">uma surpresa para descobrir</div><h2 id="surpriseBoxesTitle">Caixas-surpresa.</h2></div>
+              <p class="section-subtitle">Escolha uma caixa e descubra qual mimo vem dentro.</p>
+            </div>
+            <div class="surprise-box-grid" id="surpriseBoxes" aria-live="polite"></div>
+          </section>
           <div class="section-heading">
             <div><div class="section-kicker">curadoria do seu próximo desejo</div><h2>Escolha o que te<br>faz sorrir.</h2></div>
             <p class="section-subtitle">Uma seleção de coisinhas boas para sua coleção imaginária. Vai no que der vontade.</p>
@@ -479,6 +508,7 @@
             <details><summary>O que são as moedas virtuais?</summary><p>São pontos sem valor monetário que você pode juntar ao completar missões e usar para simular compras dentro do site. Não podem ser compradas, sacadas ou trocadas por dinheiro.</p></details>
             <details><summary>Como ganho moedas?</summary><p>Entre na sua conta e complete as missões disponíveis na página inicial. Algumas podem ser resgatadas uma vez só; outras ficam disponíveis novamente todos os dias, semanas ou meses. Seu saldo e seu progresso ficam associados à sua conta.</p></details>
             <details><summary>Para que serve minha coleção?</summary><p>Ela guarda os produtos que você escolheu na simulação. Ao completar uma categoria, você recebe uma recompensa de moedas virtuais, uma única vez por categoria.</p></details>
+            <details><summary>Como funcionam as caixas-surpresa?</summary><p>Cada caixa sorteia um produto que combina com a categoria e a faixa de preço configuradas. Se você já tiver o produto sorteado, as moedas gastas na caixa são devolvidas ao seu saldo.</p></details>
             <details><summary>Quais dados ficam salvos?</summary><p>Para guardar seu progresso, salvamos seu e-mail, apelido, saldo, missões, sacola e coleção. Você pode cancelar sua conta e apagar esses dados a qualquer momento na área Minha conta.</p></details>
           </div>
           <section class="section" id="sobre" style="padding-left:0;padding-right:0;padding-bottom:0">
@@ -655,11 +685,28 @@
       <div class="cart-hint">Esta é uma animação de demonstração, não um anúncio comercial. As moedas virtuais configuradas no painel são creditadas somente ao final.</div>
     </div>
   </div>
+  <div class="overlay" id="boxOpeningOverlay" role="dialog" aria-modal="true" aria-labelledby="boxOpeningTitle" aria-describedby="boxOpeningStatus" data-ready="false">
+    <div class="modal box-opening-modal">
+      <button class="modal-close" id="closeBoxOpening" aria-label="Fechar resultado da caixa" hidden>×</button>
+      <div class="box-opening-art" id="boxOpeningArt" aria-hidden="true"><span id="boxOpeningIcon">🎁</span></div>
+      <div class="eyebrow">uma surpresa para você</div>
+      <h3 id="boxOpeningTitle">Abrindo sua caixa…</h3>
+      <p class="box-opening-status" id="boxOpeningStatus" role="status" aria-live="polite" tabindex="0">Estamos preparando seu sorteio.</p>
+      <div class="box-reveal" id="boxReveal" hidden>
+        <h4 id="boxRevealName"></h4>
+        <p id="boxRevealCategory"></p>
+        <p id="boxRevealDescription"></p>
+        <p class="box-refund-note" id="boxRefundNote" hidden>Você já tinha este item: o valor da caixa foi devolvido ao seu saldo.</p>
+      </div>
+      <button class="primary-btn" id="closeBoxOpeningButton" type="button" hidden>Continuar</button>
+    </div>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     let products = [];
+    let surpriseBoxes = [];
     let categories = ["Tudo"];
     let missions = [];
     let storeSettings = {
@@ -696,6 +743,7 @@
     let adTimer;
     let adSecondsRemaining = 5;
     let adInProgress = false;
+    let boxPurchaseInProgress = false;
     const dialogFocusReturn = new Map();
 
     function openDialog(id, focusSelector) {
@@ -739,7 +787,11 @@
     function reportSupabaseError(context, error) {
       console.error(`Supabase ${context}:`, error);
       const message = error.message || "";
-      if (message.includes("Insufficient virtual coins")) {
+      if (message.includes("Insufficient virtual coins for surprise box")) {
+        showToast("Seu saldo não cobre o preço desta caixa-surpresa.");
+      } else if (message.includes("No products available for surprise box")) {
+        showToast("Esta caixa não tem produtos disponíveis no momento.");
+      } else if (message.includes("Insufficient virtual coins")) {
         showToast("Seu saldo ainda não cobre esta sacola.");
       } else if (message.includes("available after")) {
         showToast(`Esta recompensa já foi resgatada. Tente novamente em ${storeSettings.demo_cooldown_minutes} minutos.`);
@@ -778,6 +830,7 @@
       if (
         !catalog ||
         !Array.isArray(catalog.products) ||
+        !Array.isArray(catalog.surprise_boxes) ||
         !Array.isArray(catalog.categories) ||
         !Array.isArray(catalog.missions) ||
         !catalog.settings
@@ -787,6 +840,7 @@
         return false;
       }
       products = catalog.products;
+      surpriseBoxes = catalog.surprise_boxes;
       categories = ["Tudo", ...catalog.categories];
       missions = catalog.missions;
       storeSettings = catalog.settings;
@@ -819,6 +873,7 @@
       renderHeader();
       renderCategories();
       renderProducts();
+      renderSurpriseBoxes();
       renderMissions();
       renderCollection();
       renderAccount();
@@ -967,6 +1022,119 @@
       document.querySelectorAll("[data-product]").forEach(button => {
         button.addEventListener("click", () => openProduct(Number(button.dataset.product)));
       });
+    }
+
+    function renderSurpriseBoxes() {
+      const container = document.getElementById("surpriseBoxes");
+      container.innerHTML = surpriseBoxes.length ? surpriseBoxes.map(box => `
+        <article class="surprise-box-card">
+          <div class="surprise-box-icon" aria-hidden="true">🎁</div>
+          <h3>${escapeHtml(box.name)}</h3>
+          <p class="surprise-box-description">${escapeHtml(box.description || "Uma surpresa esperando por você.")}</p>
+          <div class="surprise-box-rules">
+            <span>Categoria: ${escapeHtml(box.category || "todas")}</span>
+            <span>Faixa: ${box.min_price === null ? "todos os preços" : `${box.min_price}–${box.max_price} moedas`}</span>
+            <span>${box.eligible_count} ${box.eligible_count === 1 ? "item possível" : "itens possíveis"}</span>
+          </div>
+          <button class="primary-btn surprise-box-buy" type="button" data-buy-box="${box.id}" ${box.eligible_count === 0 || boxPurchaseInProgress ? "disabled" : ""}>
+            ${box.eligible_count === 0 ? "Sem itens disponíveis" : `Abrir por ${box.price} ✳`}
+          </button>
+        </article>`).join("") : '<div class="empty-state">Nenhuma caixa-surpresa disponível por enquanto.</div>';
+      container.querySelectorAll("[data-buy-box]").forEach(button => {
+        button.addEventListener("click", () => buySurpriseBox(Number(button.dataset.buyBox)));
+      });
+    }
+
+    async function buySurpriseBox(boxId) {
+      const box = surpriseBoxes.find(item => item.id === boxId);
+      if (!box || box.eligible_count === 0 || boxPurchaseInProgress) return;
+      if (!authSession) {
+        openLogin("login");
+        showToast("Entre ou crie uma conta para abrir uma caixa-surpresa.");
+        return;
+      }
+      if (state.balance < box.price) {
+        showToast(`Você precisa de mais ${box.price - state.balance} moedas para abrir esta caixa.`);
+        return;
+      }
+
+      boxPurchaseInProgress = true;
+      const openingOverlay = document.getElementById("boxOpeningOverlay");
+      const openingArt = document.getElementById("boxOpeningArt");
+      const openingStatus = document.getElementById("boxOpeningStatus");
+      const reveal = document.getElementById("boxReveal");
+      const closeButton = document.getElementById("closeBoxOpeningButton");
+      openingOverlay.dataset.ready = "false";
+      openingArt.classList.remove("revealed");
+      openingArt.style.backgroundColor = "";
+      document.getElementById("boxOpeningIcon").textContent = "🎁";
+      document.getElementById("boxOpeningTitle").textContent = "Abrindo sua caixa…";
+      openingStatus.textContent = "Estamos preparando seu sorteio.";
+      reveal.hidden = true;
+      closeButton.hidden = true;
+      document.getElementById("closeBoxOpening").hidden = true;
+      openDialog("boxOpeningOverlay", "#boxOpeningStatus");
+      document.querySelectorAll("[data-buy-box]").forEach(button => { button.disabled = true; });
+
+      const result = await callRpc("quero_buy_surprise_box", { p_box_id: boxId });
+      if (!result.ok) {
+        closeDialog("boxOpeningOverlay");
+        boxPurchaseInProgress = false;
+        renderSurpriseBoxes();
+        return;
+      }
+      const receipt = result.data;
+      const product = receipt?.product;
+      if (
+        !receipt ||
+        typeof receipt.refunded !== "boolean" ||
+        !Number.isInteger(receipt.spent) ||
+        !Number.isInteger(receipt.reward) ||
+        !Number.isInteger(receipt.balance) ||
+        !Array.isArray(receipt.completed_categories) ||
+        !product ||
+        !Number.isInteger(product.id) ||
+        typeof product.name !== "string" ||
+        typeof product.category !== "string" ||
+        typeof product.emoji !== "string" ||
+        typeof product.color !== "string" ||
+        typeof product.description !== "string"
+      ) {
+        console.error("Supabase quero_buy_surprise_box returned an invalid result:", receipt);
+        await refreshStoreState();
+        closeDialog("boxOpeningOverlay");
+        boxPurchaseInProgress = false;
+        renderSurpriseBoxes();
+        showToast("A caixa foi processada, mas não foi possível confirmar o resultado. Atualize a página.");
+        return;
+      }
+      if (!await refreshStoreState()) {
+        closeDialog("boxOpeningOverlay");
+        boxPurchaseInProgress = false;
+        renderSurpriseBoxes();
+        return;
+      }
+
+      await new Promise(resolve => window.setTimeout(resolve, 1900));
+      openingArt.style.backgroundColor = product.color;
+      document.getElementById("boxOpeningIcon").textContent = product.emoji;
+      openingArt.classList.add("revealed");
+      document.getElementById("boxOpeningTitle").textContent = receipt.refunded ? "Uma surpresa repetida!" : "Seu mimo é…";
+      openingStatus.textContent = `Caixa aberta por ${box.price} moedas${receipt.refunded ? "; valor devolvido" : ""}.`;
+      document.getElementById("boxRevealName").textContent = product.name;
+      document.getElementById("boxRevealCategory").textContent = `${product.category} · ${product.price} ✳`;
+      document.getElementById("boxRevealDescription").textContent = product.description;
+      document.getElementById("boxRefundNote").hidden = !receipt.refunded;
+      reveal.hidden = false;
+      closeButton.hidden = false;
+      document.getElementById("closeBoxOpening").hidden = false;
+      openingOverlay.dataset.ready = "true";
+      closeButton.focus();
+      boxPurchaseInProgress = false;
+      renderSurpriseBoxes();
+      if (receipt.reward > 0) {
+        openingStatus.textContent += ` Você completou uma categoria e recebeu ${receipt.reward} moedas bônus.`;
+      }
     }
 
     function renderProductDetail(product) {
@@ -1575,6 +1743,13 @@
     document.getElementById("adOverlay").addEventListener("click", event => {
       if (event.target.id === "adOverlay") closeAd();
     });
+    document.getElementById("closeBoxOpening").addEventListener("click", () => closeDialog("boxOpeningOverlay"));
+    document.getElementById("closeBoxOpeningButton").addEventListener("click", () => closeDialog("boxOpeningOverlay"));
+    document.getElementById("boxOpeningOverlay").addEventListener("click", event => {
+      if (event.target.id === "boxOpeningOverlay" && event.currentTarget.dataset.ready === "true") {
+        closeDialog("boxOpeningOverlay");
+      }
+    });
     document.getElementById("cartOverlay").addEventListener("click", event => {
       if (event.target.id === "cartOverlay") closeDialog("cartOverlay");
     });
@@ -1630,6 +1805,11 @@
         }
       }
       if (event.key === "Escape") {
+        const boxOpeningOverlay = document.getElementById("boxOpeningOverlay");
+        if (boxOpeningOverlay.classList.contains("open")) {
+          if (boxOpeningOverlay.dataset.ready === "true") closeDialog("boxOpeningOverlay");
+          return;
+        }
         const missionCelebrationOverlay = document.getElementById("missionCelebrationOverlay");
         if (missionCelebrationOverlay.classList.contains("open")) {
           closeMissionCelebration();
