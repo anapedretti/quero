@@ -467,7 +467,7 @@
                 <div><div class="section-kicker">suas descobertas ficam por aqui</div><h2>Minha coleção.</h2></div>
                 <p class="section-subtitle">Cada compra concluída preenche uma peça do seu catálogo de colecionáveis.</p>
               </div>
-              <p class="collection-intro">Complete uma categoria colecionando todos os seus produtos e ganhe 100 moedas virtuais. Cada categoria recompensa uma única vez.</p>
+              <p class="collection-intro">Complete uma categoria colecionando todos os seus produtos e ganhe <span id="collectionRewardCopy">moedas virtuais</span>. Cada categoria recompensa uma única vez.</p>
               <div class="collection-groups" id="collectionGroups" aria-live="polite"></div>
             </section>
             <section class="account-danger">
@@ -569,30 +569,21 @@
       </div>
       <div class="ad-timer-row"><span id="adStatus" role="status" aria-live="polite">Vídeo demonstrativo em andamento…</span><span id="adCountdown">5s</span></div>
       <div class="ad-progress" aria-hidden="true"><div class="ad-progress-fill" id="adProgress"></div></div>
-      <div class="cart-hint">Esta é uma animação de demonstração, não um anúncio comercial. As 100 moedas virtuais são creditadas somente ao final.</div>
+      <div class="cart-hint">Esta é uma animação de demonstração, não um anúncio comercial. As moedas virtuais configuradas no painel são creditadas somente ao final.</div>
     </div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const products = [
-      { id: 1, name: "Caneca de outro planeta", category: "Casa & aconchego", price: 120, emoji: "☕", color: "#d2c0ed", tag: "queridinha", description: "Uma caneca com a dose certa de personalidade para acompanhar cafés demorados, chás quentinhos e ideias que chegam de outra galáxia. Seu pequeno ritual merece uma companheira especial." },
-      { id: 2, name: "Meias de domingo", category: "Estilo próprio", price: 85, emoji: "🧦", color: "#f5b7a6", tag: "conforto", description: "Aquele conforto de fim de semana, em qualquer dia da semana. Macias, divertidas e prontas para acompanhar seus passos — até os que dão só da cama ao sofá." },
-      { id: 3, name: "Vasinho quase zen", category: "Casa & aconchego", price: 160, emoji: "🪴", color: "#c6dda9", tag: "novidade", description: "Um lembrete verdinho para respirar fundo e deixar o dia mais leve. Fica bem na mesa, na estante ou naquele cantinho que está pedindo um pouco de vida." },
-      { id: 4, name: "Fone modo avião", category: "Tech & ideias", price: 240, emoji: "🎧", color: "#e8d279", tag: "foco total", description: "Seu convite para criar uma bolha sonora: uma playlist favorita, um podcast interessante ou simplesmente alguns minutos de silêncio só seus." },
-      { id: 5, name: "Caderno de grandes planos", category: "Papel & pausa", price: 95, emoji: "📔", color: "#a8cbd5", tag: "página em branco", description: "Páginas em branco para listas, rabiscos, planos mirabolantes e pensamentos soltos. Não precisa saber por onde começar — é só abrir e deixar acontecer." },
-      { id: 6, name: "Luminária fim de tarde", category: "Casa & aconchego", price: 210, emoji: "💡", color: "#f0b56e", tag: "luz boa", description: "Uma luz quentinha para desacelerar quando o dia pede uma pausa. Ideal para leituras, conversas tranquilas ou para transformar qualquer canto em refúgio." },
-      { id: 7, name: "Adesivos muito você", category: "Papel & pausa", price: 55, emoji: "🌈", color: "#edb4c9", tag: "pequeno mimo", description: "Um punhado de cor para personalizar cadernos, capinhas e tudo que estiver precisando de um toque seu. Pequenos detalhes, grande alegria." },
-      { id: 8, name: "Câmera de boas memórias", category: "Tech & ideias", price: 320, emoji: "📷", color: "#a9b9e3", tag: "instante favorito", description: "Para guardar os momentos que merecem replay: um passeio inesperado, uma mesa cheia de amigos ou aquela luz bonita no caminho de casa." }
-    ];
-    const categories = ["Tudo", ...new Set(products.map(product => product.category))];
-    const missions = [
-      { id: "hello", icon: "☀", title: "Dar uma olhadinha", detail: "Explore a lojinha com calma.", reward: 50 },
-      { id: "profile", icon: "✎", title: "Escolher seu nome", detail: "Entre na brincadeira com um apelido.", reward: 75 },
-      { id: "favorite", icon: "♡", title: "Escolher um favorito", detail: "Adicione uma coisinha à sua sacola.", reward: 60 }
-    ];
-    const collectionReward = 100;
+    let products = [];
+    let categories = ["Tudo"];
+    let missions = [];
+    let storeSettings = {
+      collection_reward: 100,
+      demo_reward: 100,
+      demo_cooldown_minutes: 60
+    };
     const supabaseClient = window.supabase.createClient(
       "https://jewswheebknviuvpinrr.supabase.co",
       "sb_publishable_Wssu-4yfNVyO4civ6rGplA_Ciulptaj"
@@ -615,13 +606,19 @@
     let adSecondsRemaining = 5;
     let adInProgress = false;
 
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[character]);
+    }
+
     function reportSupabaseError(context, error) {
       console.error(`Supabase ${context}:`, error);
       const message = error.message || "";
       if (message.includes("Insufficient virtual coins")) {
         showToast("Seu saldo ainda não cobre esta sacola.");
       } else if (message.includes("available after")) {
-        showToast("Esta recompensa já foi resgatada. Tente novamente daqui a uma hora.");
+        showToast(`Esta recompensa já foi resgatada. Tente novamente em ${storeSettings.demo_cooldown_minutes} minutos.`);
       } else if (message.includes("already claimed")) {
         showToast("Esta missão já foi resgatada.");
       } else if (message.includes("already in your cart")) {
@@ -634,6 +631,8 @@
         showToast("Este e-mail já tem uma conta. Entre nela.");
       } else if (message.includes("Password should be")) {
         showToast("A senha não atende aos requisitos do Supabase.");
+      } else if (message.includes("not enough") || message.includes("not found") || message.includes("not registered")) {
+        showToast("Não foi possível concluir: confira os dados e tente novamente.");
       } else {
         showToast("Não foi possível concluir. Confira a conexão e tente novamente.");
       }
@@ -646,6 +645,28 @@
         return { ok: false, data: null };
       }
       return { ok: true, data };
+    }
+
+    async function loadPublicCatalog() {
+      const result = await callRpc("quero_public_catalog");
+      if (!result.ok) return false;
+      const catalog = result.data;
+      if (
+        !catalog ||
+        !Array.isArray(catalog.products) ||
+        !Array.isArray(catalog.categories) ||
+        !Array.isArray(catalog.missions) ||
+        !catalog.settings
+      ) {
+        console.error("Supabase quero_public_catalog returned an invalid catalog:", catalog);
+        showToast("Não foi possível carregar a loja. Atualize a página ou tente mais tarde.");
+        return false;
+      }
+      products = catalog.products;
+      categories = ["Tudo", ...catalog.categories];
+      missions = catalog.missions;
+      storeSettings = catalog.settings;
+      return true;
     }
 
     async function refreshStoreState() {
@@ -692,7 +713,7 @@
     function renderCategories() {
       const filters = document.getElementById("productFilters");
       filters.innerHTML = categories.map(category =>
-        `<button class="category-btn ${activeCategory === category ? "active" : ""}" data-category="${category}">${category}</button>`
+        `<button class="category-btn ${activeCategory === category ? "active" : ""}" data-category="${escapeHtml(category)}">${escapeHtml(category)}</button>`
       ).join("");
       filters.querySelectorAll("button").forEach(button => {
         button.addEventListener("click", () => {
@@ -704,10 +725,10 @@
       const categoryCards = document.getElementById("categoryCards");
       const categoryNames = categories.filter(category => category !== "Tudo");
       categoryCards.innerHTML = `
-        <button class="category-card all-category" data-category="Tudo"><strong>Ver tudo</strong><span>${products.length} produtos ↗</span></button>
+        <button class="category-card all-category" data-category="Tudo"><strong>Ver tudo</strong><span>${products.filter(product => product.is_active !== false).length} produtos ↗</span></button>
         ${categoryNames.map(category => {
-          const count = products.filter(product => product.category === category).length;
-          return `<button class="category-card" data-category="${category}"><strong>${category}</strong><span>${count} ${count === 1 ? "produto" : "produtos"} ↗</span></button>`;
+          const count = products.filter(product => product.category === category && product.is_active !== false).length;
+          return `<button class="category-card" data-category="${escapeHtml(category)}"><strong>${escapeHtml(category)}</strong><span>${count} ${count === 1 ? "produto" : "produtos"} ↗</span></button>`;
         }).join("")}`;
       categoryCards.querySelectorAll("[data-category]").forEach(button => {
         button.addEventListener("click", () => {
@@ -720,16 +741,17 @@
     }
 
     function renderProducts() {
-      const visible = activeCategory === "Tudo" ? products : products.filter(product => product.category === activeCategory);
+      const activeProducts = products.filter(product => product.is_active !== false);
+      const visible = activeCategory === "Tudo" ? activeProducts : activeProducts.filter(product => product.category === activeCategory);
       document.getElementById("products").innerHTML = visible.map(product => `
         <article class="product-card">
-          <div class="product-image product-open" style="background:${product.color}" data-product="${product.id}" role="link" tabindex="0" aria-label="Ver detalhes de ${product.name}">
-            <span class="product-tag">${product.tag}</span>
-            <span class="product-emoji" aria-hidden="true">${product.emoji}</span>
-            <button class="quick-add" data-add="${product.id}" aria-label="${state.owned.includes(product.id) ? `${product.name} já está na sua coleção` : state.cart.includes(product.id) ? `${product.name} já está na sacola` : `Adicionar ${product.name} à sacola`}" ${state.owned.includes(product.id) || state.cart.includes(product.id) ? "disabled" : ""}>${state.owned.includes(product.id) || state.cart.includes(product.id) ? "✓" : "+"}</button>
+          <div class="product-image product-open" style="background:${escapeHtml(product.color)}" data-product="${product.id}" role="link" tabindex="0" aria-label="Ver detalhes de ${escapeHtml(product.name)}">
+            <span class="product-tag">${escapeHtml(product.tag)}</span>
+            <span class="product-emoji" aria-hidden="true">${escapeHtml(product.emoji)}</span>
+            <button class="quick-add" data-add="${product.id}" aria-label="${state.owned.includes(product.id) ? `${escapeHtml(product.name)} já está na sua coleção` : state.cart.includes(product.id) ? `${escapeHtml(product.name)} já está na sacola` : `Adicionar ${escapeHtml(product.name)} à sacola`}" ${state.owned.includes(product.id) || state.cart.includes(product.id) ? "disabled" : ""}>${state.owned.includes(product.id) || state.cart.includes(product.id) ? "✓" : "+"}</button>
           </div>
-        <button class="product-meta product-open" data-product="${product.id}" aria-label="Ver detalhes de ${product.name}">
-            <div><div class="product-name">${product.name}</div><div class="product-category">${product.category}</div></div>
+        <button class="product-meta product-open" data-product="${product.id}" aria-label="Ver detalhes de ${escapeHtml(product.name)}">
+            <div><div class="product-name">${escapeHtml(product.name)}</div><div class="product-category">${escapeHtml(product.category)}</div></div>
             <div class="product-price">✳ ${product.price}</div>
         </button>
         </article>
@@ -752,22 +774,23 @@
     function renderProductDetail(product) {
       const owned = state.owned.includes(product.id);
       const inCart = state.cart.includes(product.id);
+      const unavailable = product.is_active === false;
       document.getElementById("productDetail").innerHTML = `
         <nav class="product-breadcrumb" aria-label="Navegação estrutural">
-        <a href="#produtos">Produtos</a><span>／</span><span>${product.category}</span><span>／</span><span>${product.name}</span>
+        <a href="#produtos">Produtos</a><span>／</span><span>${escapeHtml(product.category)}</span><span>／</span><span>${escapeHtml(product.name)}</span>
         </nav>
         <div class="product-detail-grid">
-        <div class="detail-art" style="background:${product.color}" role="img" aria-label="Ilustração de ${product.name}">
-          <span class="detail-sticker">${product.tag}</span><span class="detail-emoji" aria-hidden="true">${product.emoji}</span>
+        <div class="detail-art" style="background:${escapeHtml(product.color)}" role="img" aria-label="Ilustração de ${escapeHtml(product.name)}">
+          <span class="detail-sticker">${escapeHtml(product.tag)}</span><span class="detail-emoji" aria-hidden="true">${escapeHtml(product.emoji)}</span>
         </div>
         <div class="detail-copy">
           <div class="eyebrow">um achadinho para você</div>
-          <div class="product-category">${product.category}</div>
-          <h1>${product.name}</h1>
-          <p class="detail-description">${product.description}</p>
+          <div class="product-category">${escapeHtml(product.category)}</div>
+          <h1>${escapeHtml(product.name)}</h1>
+          <p class="detail-description">${escapeHtml(product.description)}</p>
           <div class="detail-price-row"><span class="detail-price">✳ ${product.price}</span><span class="detail-price-note">moedas virtuais · sem valor real</span></div>
           <div class="detail-actions">
-            <button class="primary-btn" id="detailAddToCart" ${owned || inCart ? "disabled" : ""}>${owned ? "Já está na sua coleção ✓" : inCart ? "Já está na sacola ✓" : "Adicionar à sacola imaginária"}</button>
+            <button class="primary-btn" id="detailAddToCart" ${owned || inCart || unavailable ? "disabled" : ""}>${owned ? "Já está na sua coleção ✓" : inCart ? "Já está na sacola ✓" : unavailable ? "Indisponível no momento" : "Adicionar à sacola imaginária"}</button>
             <a class="text-btn" href="#produtos">← Voltar para os produtos</a>
           </div>
           <p class="detail-note">Compra simulada: use moedas conquistadas em missões. Não há cobrança, entrega ou transação com dinheiro real.</p>
@@ -900,16 +923,16 @@
     }
 
     function renderMissions() {
-      const markup = missions.map(mission => {
+      const markup = missions.filter(mission => mission.is_active !== false).map(mission => {
         const complete = state.completed.includes(mission.id);
         return `<div class="mission">
-          <div class="mission-info"><span class="mission-icon">${mission.icon}</span><div><div class="mission-title">${mission.title}</div><div class="mission-detail">${mission.detail}</div></div></div>
-          <div class="mission-reward"><div class="mission-coins">+${mission.reward} ✳</div><button class="mission-action" data-mission="${mission.id}" ${complete || !authSession ? "disabled" : ""}>${complete ? "resgatada ✓" : !authSession ? "entre para resgatar" : "resgatar →"}</button></div>
+          <div class="mission-info"><span class="mission-icon">${escapeHtml(mission.icon)}</span><div><div class="mission-title">${escapeHtml(mission.title)}</div><div class="mission-detail">${escapeHtml(mission.detail)}</div></div></div>
+          <div class="mission-reward"><div class="mission-coins">+${mission.reward} ✳</div><button class="mission-action" data-mission="${escapeHtml(mission.id)}" ${complete || !authSession ? "disabled" : ""}>${complete ? "resgatada ✓" : !authSession ? "entre para resgatar" : "resgatar →"}</button></div>
         </div>`;
       }).join("");
       ["missionsList", "missionsModalList"].forEach(id => {
         const container = document.getElementById(id);
-        const available = missions.some(mission => !state.completed.includes(mission.id));
+        const available = missions.some(mission => mission.is_active !== false && !state.completed.includes(mission.id));
         const adLocked = state.adAvailableAt && new Date(state.adAvailableAt) > new Date();
         const adAvailableTime = adLocked
           ? new Date(state.adAvailableAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
@@ -920,8 +943,8 @@
             <button class="primary-btn" data-open-login>Entrar ou criar conta</button>
           </div>` : available ? "" : `
           <div class="mission-empty-ad">
-            <div><strong>${adLocked ? `Próxima recompensa disponível às ${adAvailableTime}.` : "Sem missões disponíveis por enquanto."}</strong><p>Assista à animação demonstrativa e ganhe 100 moedas virtuais. A recompensa pode ser resgatada uma vez por hora.</p></div>
-            <button class="primary-btn" data-watch-ad ${adLocked ? "disabled" : ""}>${adLocked ? `Disponível às ${adAvailableTime}` : "Assistir e ganhar 100 ✳"}</button>
+            <div><strong>${adLocked ? `Próxima recompensa disponível às ${adAvailableTime}.` : "Sem missões disponíveis por enquanto."}</strong><p>Assista à animação demonstrativa e ganhe ${storeSettings.demo_reward} moedas virtuais. A recompensa pode ser resgatada a cada ${storeSettings.demo_cooldown_minutes} minutos.</p></div>
+            <button class="primary-btn" data-watch-ad ${adLocked ? "disabled" : ""}>${adLocked ? `Disponível às ${adAvailableTime}` : `Assistir e ganhar ${storeSettings.demo_reward} ✳`}</button>
           </div>`;
         container.innerHTML = markup + adOption;
         container.querySelectorAll("[data-mission]:not(:disabled)").forEach(button => button.addEventListener("click", () => claimMission(button.dataset.mission)));
@@ -932,34 +955,39 @@
 
     function renderCollection() {
       const container = document.getElementById("collectionGroups");
-      container.innerHTML = [...new Set(products.map(product => product.category))].map(category => {
-        const categoryProducts = products.filter(product => product.category === category);
-        const ownedProducts = categoryProducts.filter(product => state.owned.includes(product.id));
-        const complete = ownedProducts.length === categoryProducts.length;
+      document.getElementById("collectionRewardCopy").textContent = `${storeSettings.collection_reward} moedas virtuais`;
+      const collectionProducts = products.filter(product => product.is_active !== false || state.owned.includes(product.id));
+      container.innerHTML = [...new Set(collectionProducts.map(product => product.category))].map(category => {
+        const categoryProducts = collectionProducts.filter(product => product.category === category);
+        const activeProducts = categoryProducts.filter(product => product.is_active !== false);
+        const ownedProducts = activeProducts.filter(product => state.owned.includes(product.id));
+        const complete = activeProducts.length > 0 && ownedProducts.length === activeProducts.length;
         const rewardClaimed = state.collectionRewards.includes(category);
-        const progress = Math.round(ownedProducts.length / categoryProducts.length * 100);
+        const progress = activeProducts.length
+          ? Math.round(ownedProducts.length / activeProducts.length * 100)
+          : 0;
         const collectibles = categoryProducts.map(product => {
           const owned = state.owned.includes(product.id);
           return `<article class="collectible ${owned ? "owned" : "locked"}">
-            <div class="collectible-art" ${owned ? `style="background:${product.color}"` : ""}>
-              <span class="collectible-emoji" aria-hidden="true">${owned ? product.emoji : "✳"}</span>
+            <div class="collectible-art" ${owned ? `style="background:${escapeHtml(product.color)}"` : ""}>
+              <span class="collectible-emoji" aria-hidden="true">${owned ? escapeHtml(product.emoji) : "✳"}</span>
             </div>
-            <div class="collectible-state">${owned ? "Na sua coleção" : "A descobrir"}</div>
-            <div class="collectible-name">${owned ? product.name : "Espaço reservado"}</div>
+            <div class="collectible-state">${owned ? "Na sua coleção" : product.is_active === false ? "Produto arquivado" : "A descobrir"}</div>
+            <div class="collectible-name">${owned || product.is_active !== false ? escapeHtml(product.name) : "Indisponível"}</div>
             ${owned ? `<button class="mission-action" data-collection-product="${product.id}">ver produto →</button>` : ""}
           </article>`;
         }).join("");
-        return `<section class="collection-group" aria-label="Categoria ${category}">
+        return `<section class="collection-group" aria-label="Categoria ${escapeHtml(category)}">
           <div class="collection-group-head">
-            <h3>${category}</h3>
-            <div class="collection-progress"><strong>${ownedProducts.length}/${categoryProducts.length}</strong> itens</div>
+            <h3>${escapeHtml(category)}</h3>
+            <div class="collection-progress"><strong>${ownedProducts.length}/${activeProducts.length}</strong> itens ativos</div>
           </div>
-          <div class="collection-progress-track" role="progressbar" aria-label="Progresso de ${category}" aria-valuemin="0" aria-valuemax="${categoryProducts.length}" aria-valuenow="${ownedProducts.length}">
+          <div class="collection-progress-track" role="progressbar" aria-label="Progresso de ${escapeHtml(category)}" aria-valuemin="0" aria-valuemax="${activeProducts.length}" aria-valuenow="${ownedProducts.length}">
             <div class="collection-progress-fill" style="width:${progress}%"></div>
           </div>
           <div class="collection-grid">${collectibles}</div>
           ${complete ? `<div class="collection-complete">✳ Categoria completa${rewardClaimed ? " — recompensa resgatada" : ""}</div>` : ""}
-          ${complete && rewardClaimed ? `<div class="collection-reward">+${collectionReward} ✳ recebidas</div>` : ""}
+          ${complete && rewardClaimed ? `<div class="collection-reward">+${storeSettings.collection_reward} ✳ recebidas</div>` : ""}
         </section>`;
       }).join("");
       container.querySelectorAll("[data-collection-product]").forEach(button => {
@@ -975,19 +1003,25 @@
         showToast("Entre ou crie uma conta para resgatar moedas.");
         return;
       }
-      if (id === "profile" && !state.name) {
+      if (mission.requirement === "profile" && !state.name) {
         showToast("Escolha um apelido ao criar sua conta para completar esta missão.");
         return;
       }
-      if (id === "favorite" && state.cart.length === 0) {
+      if (mission.requirement === "cart" && state.cart.length === 0) {
         showToast("Adicione um item à sacola para completar esta missão.");
         window.location.hash = "#produtos";
         return;
       }
       const result = await callRpc("quero_claim_mission", { p_mission_id: id });
       if (!result.ok) return;
+      if (!result.data || !Number.isInteger(result.data.reward)) {
+        console.error("Supabase quero_claim_mission returned an invalid reward:", result.data);
+        await refreshStoreState();
+        showToast("A missão foi processada, mas não foi possível confirmar o saldo. Atualize a página.");
+        return;
+      }
       if (!await refreshStoreState()) return;
-      showToast(`Missão completa! +${mission.reward} moedas virtuais ✳`);
+      showToast(`Missão completa! +${result.data.reward} moedas virtuais ✳`);
       if (document.getElementById("missionsOverlay").classList.contains("open")) {
         document.getElementById("missionsModalList").scrollTop = document.getElementById("missionsModalList").scrollHeight;
       }
@@ -1001,7 +1035,7 @@
         return;
       }
       if (state.adAvailableAt && new Date(state.adAvailableAt) > new Date()) {
-        showToast("Esta recompensa pode ser resgatada uma vez por hora.");
+        showToast(`Esta recompensa pode ser resgatada a cada ${storeSettings.demo_cooldown_minutes} minutos.`);
         return;
       }
       adInProgress = true;
@@ -1031,11 +1065,17 @@
         document.getElementById("adOverlay").classList.remove("open");
         return;
       }
+      if (!result.data || !Number.isInteger(result.data.reward)) {
+        console.error("Supabase quero_claim_demo_ad returned an invalid reward:", result.data);
+        document.getElementById("adOverlay").classList.remove("open");
+        showToast("A recompensa foi processada, mas não foi possível confirmar o saldo. Atualize a página.");
+        return;
+      }
       if (!await refreshStoreState()) return;
-      document.getElementById("adStatus").textContent = "Demonstração concluída! +100 moedas ✳";
+      document.getElementById("adStatus").textContent = `Demonstração concluída! +${result.data.reward} moedas ✳`;
       document.getElementById("adCountdown").textContent = "✓";
       document.getElementById("adProgress").style.width = "100%";
-      showToast("Anúncio demonstrativo concluído! +100 moedas virtuais ✳");
+      showToast(`Animação demonstrativa concluída! +${result.data.reward} moedas virtuais ✳`);
     }
 
     function closeAd() {
@@ -1047,7 +1087,7 @@
 
     async function addToCart(id) {
       const product = products.find(item => item.id === id);
-      if (!product) return;
+      if (!product || product.is_active === false) return;
       if (!authSession) {
         openLogin("login");
         showToast("Entre ou crie uma conta para salvar sua sacola.");
@@ -1072,7 +1112,7 @@
       const items = state.cart.map(id => products.find(product => product.id === id)).filter(Boolean);
       const total = items.reduce((sum, product) => sum + product.price, 0);
       document.getElementById("cartItems").innerHTML = items.length
-        ? items.map(product => `<div class="cart-row"><div class="cart-row-item">${product.emoji} ${product.name}<small>${product.category}</small><button class="remove-item-btn" data-remove="${product.id}" aria-label="Remover ${product.name} da sacola">Remover</button></div><span>${product.price} ✳</span></div>`).join("")
+        ? items.map(product => `<div class="cart-row"><div class="cart-row-item">${escapeHtml(product.emoji)} ${escapeHtml(product.name)}<small>${escapeHtml(product.category)}</small><button class="remove-item-btn" data-remove="${product.id}" aria-label="Remover ${escapeHtml(product.name)} da sacola">Remover</button></div><span>${product.price} ✳</span></div>`).join("")
         : '<div class="cart-empty">Sua sacola está vazia — por enquanto.</div>';
       document.getElementById("cartItems").querySelectorAll("[data-remove]").forEach(button => {
         button.addEventListener("click", async () => {
@@ -1095,6 +1135,8 @@
     }
 
     async function checkout() {
+      if (!await loadPublicCatalog()) return;
+      renderCart();
       const purchasedProducts = state.cart.map(id => products.find(item => item.id === id));
       if (purchasedProducts.some(product => !product)) {
         showToast("A sacola contém um item indisponível. Remova-o e tente novamente.");
@@ -1135,8 +1177,8 @@
       const items = document.getElementById("celebrationItems");
       items.innerHTML = purchasedProducts.map(product => `
         <div class="celebration-item">
-          <div class="celebration-item-art" style="background:${product.color}" aria-hidden="true">${product.emoji}</div>
-          <div class="celebration-item-copy"><div class="celebration-item-name">${product.name}</div><div class="celebration-item-category">${product.category}</div></div>
+          <div class="celebration-item-art" style="background:${escapeHtml(product.color)}" aria-hidden="true">${escapeHtml(product.emoji)}</div>
+          <div class="celebration-item-copy"><div class="celebration-item-name">${escapeHtml(product.name)}</div><div class="celebration-item-category">${escapeHtml(product.category)}</div></div>
           <span class="celebration-item-price">−${product.price} ✳</span>
         </div>
       `).join("");
@@ -1347,12 +1389,24 @@
         return;
       }
       authSession = data.session;
+      await loadPublicCatalog();
       if (authSession) {
-        await refreshStoreState();
+        if (!await refreshStoreState()) renderApp();
       } else {
         renderApp();
       }
     }
+
+    document.addEventListener("visibilitychange", async () => {
+      if (document.visibilityState !== "visible") return;
+      if (!await loadPublicCatalog()) return;
+      if (!categories.includes(activeCategory)) activeCategory = "Tudo";
+      renderCategories();
+      renderProducts();
+      renderMissions();
+      renderCollection();
+      renderRoute();
+    });
 
     initializeStore();
   </script>

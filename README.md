@@ -4,14 +4,38 @@ Loja de demonstração em que as compras usam apenas moedas virtuais; não há p
 
 ## Configuração
 
-1. No painel do Supabase, abra **SQL Editor** e execute, nessa ordem, [`supabase/migrations/20261011000100_quero_store.sql`](./supabase/migrations/20261011000100_quero_store.sql) e [`supabase/migrations/20261012000100_quero_account_management.sql`](./supabase/migrations/20261012000100_quero_account_management.sql). A segunda migração habilita a edição do apelido e o cancelamento da conta.
+1. No painel do Supabase, abra **SQL Editor** e execute, nessa ordem:
+   - [`supabase/migrations/20261011000100_quero_store.sql`](./supabase/migrations/20261011000100_quero_store.sql);
+   - [`supabase/migrations/20261012000100_quero_account_management.sql`](./supabase/migrations/20261012000100_quero_account_management.sql), para edição do perfil e cancelamento da conta;
+   - [`supabase/migrations/20261013000100_quero_admin.sql`](./supabase/migrations/20261013000100_quero_admin.sql), para o painel, papéis de acesso e catálogo configurável.
 2. No painel, em **Authentication → URL Configuration**, configure a URL publicada do site como **Site URL** e inclua também em **Redirect URLs**:
    - `http://localhost:8000/**` para desenvolvimento local;
    - a URL do GitHub Pages, por exemplo `https://<usuario>.github.io/<repositorio>/**`.
 3. Confirme que o provedor **Email** está habilitado em **Authentication → Sign In / Providers**.
 4. Em **Settings → Pages**, escolha **GitHub Actions** como fonte de publicação. O workflow publica o site automaticamente ao enviar alterações para `main`; [`index.html`](./index.html) é a entrada.
 
-A URL e a chave **publishable** do projeto Supabase ficam no cliente estático para que o navegador possa conectar. Essa chave é pública por definição: não coloque aqui uma chave `service_role`, senha do banco nem qualquer outra credencial privada. O saldo, as compras, o perfil e o cancelamento da conta são processados por funções SQL autenticadas; as tabelas privadas não aceitam gravações diretas do navegador.
+A URL e a chave **publishable** do projeto Supabase ficam no cliente estático para que o navegador possa conectar. Essa chave é pública por definição: não coloque aqui uma chave `service_role`, senha do banco nem qualquer outra credencial privada. O saldo, as compras, o perfil, o cancelamento da conta e as operações administrativas são processados por funções SQL autenticadas; as tabelas privadas não aceitam gravações diretas do navegador.
+
+## Administração
+
+O painel fica em [`admin.html`](./admin.html), fora da navegação da loja. Ele exige uma conta Supabase com papel `admin` ou `editor`; não basta conhecer o endereço da página.
+
+Para liberar a primeira conta administradora:
+
+1. Crie a conta normalmente pela página da loja e confirme o e-mail, se essa exigência estiver habilitada.
+2. No Supabase **SQL Editor**, execute o comando abaixo substituindo o endereço pelo e-mail exato dessa conta:
+
+   ```sql
+   insert into public.quero_admin_users (user_id, role)
+   select id, 'admin'
+   from auth.users
+   where lower(email) = lower('seu-email@exemplo.com')
+   on conflict (user_id) do update set role = excluded.role;
+   ```
+
+3. Abra `admin.html` no endereço publicado e entre com essa conta. Para adicionar editores pelo painel, cada pessoa deve primeiro criar uma conta na loja; depois, informe o e-mail dessa conta na seção **Editores**. Editores podem gerenciar categorias, produtos, missões e pontuação, mas apenas administradores podem conceder ou remover esse acesso.
+
+Produtos, categorias e missões arquivados deixam de aparecer para novas interações, mas seus registros e o histórico de coleção não são apagados. O painel altera recompensas futuras; moedas já recebidas não são recalculadas.
 
 ## Executar localmente
 
@@ -29,4 +53,4 @@ No GitHub, abra **Settings → Pages** e configure **GitHub Actions** como fonte
 
 ## Demonstração de anúncio
 
-A animação é fictícia, não carrega publicidade nem afirma uma visualização verificável. A função do banco limita o crédito de 100 moedas a uma vez por conta por hora. Essa demonstração não deve ser apresentada como anúncio recompensado de um provedor externo.
+A animação é fictícia, não carrega publicidade nem afirma uma visualização verificável. O painel configura a quantidade de moedas e o intervalo entre recompensas por conta. Essa demonstração não deve ser apresentada como anúncio recompensado de um provedor externo.

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#11110f">
+  <title>Administração — quero.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    :root { color-scheme: dark; --bg:#11110f; --surface:#1a1a17; --line:#34342e; --text:#f6f3e9; --muted:#a5a397; --lime:#d8f36a; --pink:#f5a6bb; --mono:"DM Mono",monospace; --sans:"DM Sans",sans-serif; --display:"Space Grotesk",sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:14px var(--sans); }
+    button,input,select,textarea { font:inherit; }
+    button { color:inherit; }
+    [hidden] { display:none !important; }
+    .shell { width:min(1200px,calc(100% - 40px)); margin:auto; }
+    header { min-height:76px; display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid var(--line); }
+    .brand { color:var(--text); font:700 29px var(--display); letter-spacing:-.09em; text-decoration:none; }
+    .brand span { color:var(--lime); }
+    .header-meta { display:flex; align-items:center; gap:14px; color:var(--muted); font:10px var(--mono); }
+    .quiet-btn,.action-btn { border:1px solid var(--line); background:transparent; padding:9px 12px; color:var(--muted); cursor:pointer; font-size:11px; }
+    .quiet-btn:hover,.action-btn:hover { border-color:var(--lime); color:var(--lime); }
+    main { padding:42px 0 70px; }
+    .eyebrow,.kicker { color:var(--lime); font:10px var(--mono); letter-spacing:.12em; text-transform:uppercase; }
+    h1,h2,h3 { font-family:var(--display); letter-spacing:-.05em; }
+    h1 { margin:9px 0; font-size:clamp(32px,5vw,48px); }
+    h2 { margin:0 0 8px; font-size:25px; }
+    h3 { margin:0 0 7px; font-size:18px; }
+    p { color:var(--muted); line-height:1.6; }
+    .lead { max-width:720px; margin:0 0 30px; }
+    .notice { margin:18px 0; padding:12px 15px; border:1px solid var(--line); color:var(--muted); font-size:12px; line-height:1.5; }
+    .notice.error { border-color:var(--pink); color:var(--pink); }
+    .notice.success { border-color:var(--lime); color:var(--lime); }
+    .panel { margin-top:20px; padding:22px; border:1px solid var(--line); background:var(--surface); }
+    .login-panel { width:min(430px,100%); margin:10vh auto; }
+    .admin-nav { display:flex; flex-wrap:wrap; gap:8px; margin:25px 0; }
+    .admin-nav a { padding:9px 12px; border:1px solid var(--line); color:var(--muted); text-decoration:none; font-size:11px; }
+    .admin-nav a:hover { border-color:var(--lime); color:var(--lime); }
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; }
+    .field { min-width:0; }
+    .field.full { grid-column:1/-1; }
+    label { display:block; margin-bottom:6px; color:var(--muted); font:10px var(--mono); letter-spacing:.05em; text-transform:uppercase; }
+    input,select,textarea { width:100%; border:1px solid var(--line); border-radius:0; background:var(--bg); color:var(--text); padding:11px; }
+    textarea { min-height:86px; resize:vertical; }
+    input:focus,select:focus,textarea:focus { outline:1px solid var(--lime); border-color:var(--lime); }
+    input[type="color"] { height:42px; padding:4px; }
+    .primary-btn { margin-top:15px; border:0; border-radius:999px; padding:11px 17px; background:var(--lime); color:var(--bg); font-weight:700; cursor:pointer; }
+    .secondary-btn { margin-top:15px; border:1px solid var(--line); border-radius:999px; padding:10px 15px; background:transparent; color:var(--muted); cursor:pointer; }
+    .item-list { display:grid; gap:8px; margin-top:17px; }
+    .item-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:14px; padding:12px; border:1px solid var(--line); }
+    .item-title { font-size:12px; font-weight:700; }
+    .item-meta { margin-top:4px; color:var(--muted); font-size:10px; line-height:1.5; overflow-wrap:anywhere; }
+    .item-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:7px; }
+    .action-btn.danger { color:var(--pink); }
+    .action-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .empty { padding:16px; color:var(--muted); font-size:12px; }
+    #editorsPanel { border-color:rgba(216,243,106,.4); }
+    .back-link { color:var(--muted); font-size:11px; }
+    .back-link:hover { color:var(--lime); }
+    @media(max-width:650px) {
+      .shell { width:calc(100% - 28px); }
+      header { align-items:flex-start; padding:16px 0; }
+      .header-meta { align-items:flex-end; flex-direction:column; gap:8px; }
+      main { padding-top:30px; }
+      .panel { padding:17px; }
+      .form-grid { grid-template-columns:1fr; }
+      .field.full { grid-column:auto; }
+      .item-row { grid-template-columns:1fr; }
+      .item-actions { justify-content:flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="admin.html">quero<span>.</span></a>
+      <div class="header-meta"><span>PAINEL ADMINISTRATIVO · ACESSO RESTRITO</span><button class="quiet-btn" id="signOut" type="button" hidden>Sair</button></div>
+    </header>
+    <main>
+      <section id="loginView" class="panel login-panel">
+        <div class="eyebrow">área privada</div>
+        <h1>Administração.</h1>
+        <p>Entre com sua conta quero. de administrador ou editor. O acesso e as alterações são validados pelo Supabase.</p>
+        <form id="loginForm">
+          <div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required></div>
+          <div class="field" style="margin-top:14px"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required></div>
+          <button class="primary-btn" type="submit">Entrar</button>
+        </form>
+        <div class="notice" id="loginNotice" role="status" aria-live="polite" hidden></div>
+      </section>
+
+      <section id="deniedView" class="panel login-panel" hidden>
+        <div class="eyebrow">acesso restrito</div>
+        <h1>Sem permissão.</h1>
+        <p id="deniedMessage">Esta conta não tem acesso ao painel administrativo.</p>
+        <button class="secondary-btn" id="deniedSignOut" type="button">Sair da conta</button>
+        <a class="back-link" href="index.html">Voltar à loja</a>
+      </section>
+
+      <section id="dashboard" hidden>
+        <div class="eyebrow">administração da loja</div>
+        <h1>Gerencie a experiência.</h1>
+        <p class="lead">Cadastros e regras são atualizados no Supabase e passam a valer para todas as pessoas usuárias.</p>
+        <div id="dashboardNotice" class="notice" role="status" aria-live="polite" hidden></div>
+        <nav class="admin-nav" aria-label="Seções administrativas">
+          <a href="#categorias">Categorias</a><a href="#produtos">Produtos</a>
+          <a href="#missoes">Missões</a><a href="#pontuacao">Pontuação</a>
+          <a href="#editores" id="editorsNav" hidden>Editores</a>
+        </nav>
+
+        <section class="panel" id="categorias">
+          <div class="kicker">catálogo</div><h2>Categorias</h2>
+          <form id="categoryForm">
+            <input id="categoryId" type="hidden">
+            <div class="form-grid">
+              <div class="field full"><label for="categoryName">Nome da categoria</label><input id="categoryName" maxlength="80" required></div>
+            </div>
+            <button class="primary-btn" type="submit">Salvar categoria</button>
+            <button class="secondary-btn" type="button" data-reset="categoryForm">Limpar</button>
+          </form>
+          <div class="item-list" id="categoryList"></div>
+        </section>
+
+        <section class="panel" id="produtos">
+          <div class="kicker">catálogo</div><h2>Produtos</h2>
+          <form id="productForm">
+            <input id="productId" type="hidden">
+            <div class="form-grid">
+              <div class="field"><label for="productName">Nome</label><input id="productName" maxlength="100" required></div>
+              <div class="field"><label for="productCategory">Categoria</label><select id="productCategory" required></select></div>
+              <div class="field"><label for="productPrice">Preço em moedas</label><input id="productPrice" type="number" min="1" max="1000000" step="1" required></div>
+              <div class="field"><label for="productEmoji">Ícone (emoji)</label><input id="productEmoji" maxlength="16" value="✳" required></div>
+              <div class="field"><label for="productColor">Cor do card</label><input id="productColor" type="color" value="#d8f36a" required></div>
+              <div class="field"><label for="productTag">Etiqueta</label><input id="productTag" maxlength="40" value="novidade"></div>
+              <div class="field full"><label for="productDescription">Descrição</label><textarea id="productDescription" maxlength="1000"></textarea></div>
+            </div>
+            <button class="primary-btn" type="submit">Salvar produto</button>
+            <button class="secondary-btn" type="button" data-reset="productForm">Limpar</button>
+          </form>
+          <div class="item-list" id="productList"></div>
+        </section>
+
+        <section class="panel" id="missoes">
+          <div class="kicker">engajamento</div><h2>Missões</h2>
+          <form id="missionForm">
+            <div class="form-grid">
+              <div class="field"><label for="missionId">Identificador (não muda após criar)</label><input id="missionId" pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="60" required></div>
+              <div class="field"><label for="missionIcon">Ícone (emoji)</label><input id="missionIcon" maxlength="16" value="✳" required></div>
+              <div class="field"><label for="missionTitle">Título</label><input id="missionTitle" maxlength="100" required></div>
+              <div class="field"><label for="missionReward">Recompensa em moedas</label><input id="missionReward" type="number" min="0" max="1000000" step="1" required></div>
+              <div class="field full"><label for="missionDetail">Descrição</label><input id="missionDetail" maxlength="240" required></div>
+              <div class="field full"><label for="missionRequirement">Regra para resgatar</label>
+                <select id="missionRequirement"><option value="open">Resgate disponível</option><option value="profile">Exige apelido preenchido</option><option value="cart">Exige item na sacola</option></select>
+              </div>
+            </div>
+            <button class="primary-btn" type="submit">Salvar missão</button>
+            <button class="secondary-btn" type="button" data-reset="missionForm">Limpar</button>
+          </form>
+          <div class="item-list" id="missionList"></div>
+        </section>
+
+        <section class="panel" id="pontuacao">
+          <div class="kicker">regras de pontuação</div><h2>Recompensas</h2>
+          <form id="rulesForm">
+            <div class="form-grid">
+              <div class="field"><label for="collectionReward">Bônus por categoria completa</label><input id="collectionReward" type="number" min="0" max="1000000" step="1" required></div>
+              <div class="field"><label for="demoReward">Recompensa da animação demonstrativa</label><input id="demoReward" type="number" min="0" max="1000000" step="1" required></div>
+              <div class="field"><label for="demoCooldown">Intervalo entre recompensas (minutos)</label><input id="demoCooldown" type="number" min="1" max="10080" step="1" required></div>
+            </div>
+            <button class="primary-btn" type="submit">Salvar regras</button>
+          </form>
+          <p>Os valores alteram os créditos feitos a partir desta mudança; moedas já recebidas não são recalculadas.</p>
+        </section>
+
+        <section class="panel" id="editores" hidden>
+          <div class="kicker">acesso à equipe</div><h2>Adicionar editores</h2>
+          <p>A pessoa precisa criar uma conta quero. primeiro. Editores podem gerenciar categorias, produtos, missões e pontuação; apenas administradores podem gerenciar editores.</p>
+          <form id="editorForm">
+            <div class="field"><label for="editorEmail">E-mail da conta existente</label><input id="editorEmail" type="email" autocomplete="email" required></div>
+            <button class="primary-btn" type="submit">Adicionar como editor</button>
+          </form>
+          <div class="item-list" id="editorList"></div>
+        </section>
+        <a class="back-link" href="index.html">← Voltar à loja</a>
+      </section>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      "https://jewswheebknviuvpinrr.supabase.co",
+      "sb_publishable_Wssu-4yfNVyO4civ6rGplA_Ciulptaj"
+    );
+    let session = null;
+    let data = null;
+    const $ = id => document.getElementById(id);
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[character]);
+
+    function notice(element, message, type = "") {
+      element.textContent = message;
+      element.className = `notice ${type}`;
+      element.hidden = false;
+    }
+
+    async function rpc(name, args = {}) {
+      const { data: result, error } = await supabaseClient.rpc(name, args);
+      if (error) throw error;
+      return result;
+    }
+
+    function showLogin(message = "") {
+      $("loginView").hidden = false;
+      $("deniedView").hidden = true;
+      $("dashboard").hidden = true;
+      $("signOut").hidden = true;
+      if (message) notice($("loginNotice"), message, "error");
+    }
+
+    function showDenied(message) {
+      $("loginView").hidden = true;
+      $("dashboard").hidden = true;
+      $("deniedView").hidden = false;
+      $("signOut").hidden = false;
+      $("deniedMessage").textContent = message;
+    }
+
+    async function loadDashboard() {
+      if (!session) return showLogin();
+      try {
+        const result = await rpc("quero_admin_get_data");
+        if (!result || !Array.isArray(result.categories) || !Array.isArray(result.products) || !Array.isArray(result.missions) || !result.settings) {
+          throw new Error("O painel recebeu dados inválidos do servidor.");
+        }
+        data = result;
+        $("loginView").hidden = true;
+        $("deniedView").hidden = true;
+        $("dashboard").hidden = false;
+        $("signOut").hidden = false;
+        $("editores").hidden = !data.is_admin;
+        $("editorsNav").hidden = !data.is_admin;
+        renderDashboard();
+      } catch (error) {
+        console.error("Admin dashboard load failed:", error);
+        showDenied(error.message.includes("Administrator access required")
+          ? "Esta conta não tem permissão administrativa. Solicite acesso ao administrador."
+          : "Não foi possível carregar o painel. Confira a conexão e tente novamente.");
+      }
+    }
+
+    function renderDashboard() {
+      renderCategories();
+      renderProducts();
+      renderMissions();
+      $("collectionReward").value = data.settings.collection_reward;
+      $("demoReward").value = data.settings.demo_reward;
+      $("demoCooldown").value = data.settings.demo_cooldown_minutes;
+      renderEditors();
+    }
+
+    function renderCategories() {
+      const active = data.categories.filter(item => item.is_active);
+      $("productCategory").innerHTML = active.length
+        ? active.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("")
+        : '<option value="">Crie uma categoria ativa primeiro</option>';
+      $("categoryList").innerHTML = data.categories.length ? data.categories.map(item => `
+        <div class="item-row">
+          <div><div class="item-title">${escapeHtml(item.name)}</div><div class="item-meta">${escapeHtml(item.id)} · ${item.is_active ? "ativa" : "arquivada"}</div></div>
+          <div class="item-actions">
+            <button class="action-btn" data-category-edit="${escapeHtml(item.id)}">Editar</button>
+            <button class="action-btn ${item.is_active ? "danger" : ""}" data-category-active="${escapeHtml(item.id)}" data-active="${item.is_active}">${item.is_active ? "Arquivar" : "Reativar"}</button>
+          </div>
+        </div>`).join("") : '<div class="empty">Nenhuma categoria cadastrada.</div>';
+      $("categoryList").querySelectorAll("[data-category-edit]").forEach(button => button.addEventListener("click", () => {
+        const category = data.categories.find(item => item.id === button.dataset.categoryEdit);
+        $("categoryId").value = category.id;
+        $("categoryName").value = category.name;
+        $("categoryName").focus();
+      }));
+      $("categoryList").querySelectorAll("[data-category-active]").forEach(button => button.addEventListener("click", () => {
+        runAction(async () => {
+          await rpc("quero_admin_set_category_active", {
+            p_id: button.dataset.categoryActive,
+            p_active: button.dataset.active !== "true"
+          });
+          await refreshDashboard("Categoria atualizada.");
+        });
+      }));
+    }
+
+    function renderProducts() {
+      $("productList").innerHTML = data.products.length ? data.products.map(item => `
+        <div class="item-row">
+          <div><div class="item-title">${escapeHtml(item.emoji)} ${escapeHtml(item.name)} · ${item.price} ✳</div><div class="item-meta">${escapeHtml(item.category)} · ${item.is_active ? "publicado" : "arquivado"}</div></div>
+          <div class="item-actions">
+            <button class="action-btn" data-product-edit="${item.id}">Editar</button>
+            <button class="action-btn ${item.is_active ? "danger" : ""}" data-product-active="${item.id}" data-active="${item.is_active}">${item.is_active ? "Arquivar" : "Reativar"}</button>
+          </div>
+        </div>`).join("") : '<div class="empty">Nenhum produto cadastrado.</div>';
+      $("productList").querySelectorAll("[data-product-edit]").forEach(button => button.addEventListener("click", () => {
+        const product = data.products.find(item => item.id === Number(button.dataset.productEdit));
+        $("productId").value = product.id;
+        $("productName").value = product.name;
+        $("productCategory").value = product.category_id;
+        $("productPrice").value = product.price;
+        $("productEmoji").value = product.emoji;
+        $("productColor").value = product.color;
+        $("productTag").value = product.tag;
+        $("productDescription").value = product.description;
+        $("produtos").scrollIntoView({ behavior: "smooth" });
+      }));
+      $("productList").querySelectorAll("[data-product-active]").forEach(button => button.addEventListener("click", () => {
+        runAction(async () => {
+          await rpc("quero_admin_set_product_active", {
+            p_id: Number(button.dataset.productActive),
+            p_active: button.dataset.active !== "true"
+          });
+          await refreshDashboard("Produto atualizado.");
+        });
+      }));
+    }
+
+    function renderMissions() {
+      $("missionList").innerHTML = data.missions.length ? data.missions.map(item => `
+        <div class="item-row">
+          <div><div class="item-title">${escapeHtml(item.icon)} ${escapeHtml(item.title)} · +${item.reward} ✳</div><div class="item-meta">${escapeHtml(item.detail)} · ${item.requirement} · ${item.is_active ? "ativa" : "arquivada"}</div></div>
+          <div class="item-actions">
+            <button class="action-btn" data-mission-edit="${escapeHtml(item.id)}">Editar</button>
+            <button class="action-btn ${item.is_active ? "danger" : ""}" data-mission-active="${escapeHtml(item.id)}" data-active="${item.is_active}">${item.is_active ? "Arquivar" : "Reativar"}</button>
+          </div>
+        </div>`).join("") : '<div class="empty">Nenhuma missão cadastrada.</div>';
+      $("missionList").querySelectorAll("[data-mission-edit]").forEach(button => button.addEventListener("click", () => {
+        const mission = data.missions.find(item => item.id === button.dataset.missionEdit);
+        $("missionId").value = mission.id;
+        $("missionId").readOnly = true;
+        $("missionIcon").value = mission.icon;
+        $("missionTitle").value = mission.title;
+        $("missionDetail").value = mission.detail;
+        $("missionReward").value = mission.reward;
+        $("missionRequirement").value = mission.requirement;
+        $("missoes").scrollIntoView({ behavior: "smooth" });
+      }));
+      $("missionList").querySelectorAll("[data-mission-active]").forEach(button => button.addEventListener("click", () => {
+        runAction(async () => {
+          await rpc("quero_admin_set_mission_active", {
+            p_id: button.dataset.missionActive,
+            p_active: button.dataset.active !== "true"
+          });
+          await refreshDashboard("Missão atualizada.");
+        });
+      }));
+    }
+
+    function renderEditors() {
+      if (!data.is_admin) return;
+      $("editorList").innerHTML = data.editors.length ? data.editors.map(editor => `
+        <div class="item-row">
+          <div><div class="item-title">${escapeHtml(editor.email)}</div><div class="item-meta">Editor</div></div>
+          <button class="action-btn danger" data-remove-editor="${escapeHtml(editor.email)}">Remover acesso</button>
+        </div>`).join("") : '<div class="empty">Nenhum editor adicional.</div>';
+      $("editorList").querySelectorAll("[data-remove-editor]").forEach(button => button.addEventListener("click", () => {
+        runAction(async () => {
+          await rpc("quero_admin_set_editor", { p_email: button.dataset.removeEditor, p_enabled: false });
+          await refreshDashboard("Acesso do editor removido.");
+        });
+      }));
+    }
+
+    async function refreshDashboard(message) {
+      data = await rpc("quero_admin_get_data");
+      renderDashboard();
+      notice($("dashboardNotice"), message, "success");
+    }
+
+    async function runAction(action) {
+      try {
+        await action();
+      } catch (error) {
+        console.error("Admin action failed:", error);
+        notice($("dashboardNotice"), error.message.includes("Administrator access required")
+          ? "Sua permissão não permite esta ação."
+          : `Não foi possível salvar: ${error.message}`, "error");
+      }
+    }
+
+    function slugify(value) {
+      return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+
+    $("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      try {
+        const { data: result, error } = await supabaseClient.auth.signInWithPassword({
+          email: $("email").value.trim(),
+          password: $("password").value
+        });
+        if (error) throw error;
+        session = result.session;
+        await loadDashboard();
+      } catch (error) {
+        console.error("Admin sign in failed:", error);
+        notice($("loginNotice"), "Não foi possível entrar. Confira e-mail, senha e conexão.", "error");
+      }
+    });
+
+    $("categoryForm").addEventListener("submit", event => {
+      event.preventDefault();
+      runAction(async () => {
+        const name = $("categoryName").value.trim();
+        const id = $("categoryId").value || slugify(name);
+        await rpc("quero_admin_save_category", { p_id: id, p_name: name });
+        $("categoryForm").reset();
+        $("categoryId").value = "";
+        await refreshDashboard("Categoria salva.");
+      });
+    });
+
+    $("productForm").addEventListener("submit", event => {
+      event.preventDefault();
+      runAction(async () => {
+        const idValue = $("productId").value;
+        await rpc("quero_admin_save_product", {
+          p_id: idValue ? Number(idValue) : null,
+          p_name: $("productName").value.trim(),
+          p_category_id: $("productCategory").value,
+          p_price: Number($("productPrice").value),
+          p_emoji: $("productEmoji").value.trim(),
+          p_color: $("productColor").value,
+          p_tag: $("productTag").value.trim(),
+          p_description: $("productDescription").value.trim()
+        });
+        $("productForm").reset();
+        $("productId").value = "";
+        $("productEmoji").value = "✳";
+        $("productColor").value = "#d8f36a";
+        $("productTag").value = "novidade";
+        await refreshDashboard("Produto salvo.");
+      });
+    });
+
+    $("missionForm").addEventListener("submit", event => {
+      event.preventDefault();
+      runAction(async () => {
+        await rpc("quero_admin_save_mission", {
+          p_id: slugify($("missionId").value),
+          p_icon: $("missionIcon").value.trim(),
+          p_title: $("missionTitle").value.trim(),
+          p_detail: $("missionDetail").value.trim(),
+          p_reward: Number($("missionReward").value),
+          p_requirement: $("missionRequirement").value
+        });
+        resetForm("missionForm");
+        await refreshDashboard("Missão salva.");
+      });
+    });
+
+    $("rulesForm").addEventListener("submit", event => {
+      event.preventDefault();
+      runAction(async () => {
+        await rpc("quero_admin_update_rules", {
+          p_collection_reward: Number($("collectionReward").value),
+          p_demo_reward: Number($("demoReward").value),
+          p_demo_cooldown_minutes: Number($("demoCooldown").value)
+        });
+        await refreshDashboard("Regras de pontuação atualizadas.");
+      });
+    });
+
+    $("editorForm").addEventListener("submit", event => {
+      event.preventDefault();
+      runAction(async () => {
+        await rpc("quero_admin_set_editor", { p_email: $("editorEmail").value.trim(), p_enabled: true });
+        $("editorForm").reset();
+        await refreshDashboard("Editor adicionado.");
+      });
+    });
+
+    function resetForm(id) {
+      $(id).reset();
+      if (id === "categoryForm") $("categoryId").value = "";
+      if (id === "productForm") $("productId").value = "";
+      if (id === "missionForm") $("missionId").readOnly = false;
+    }
+
+    document.querySelectorAll("[data-reset]").forEach(button => button.addEventListener("click", () => resetForm(button.dataset.reset)));
+    async function signOut() {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) {
+        console.error("Admin sign out failed:", error);
+        showDenied("Não foi possível encerrar a sessão. Tente novamente.");
+        return;
+      }
+      session = null;
+      data = null;
+      showLogin();
+    }
+    $("signOut").addEventListener("click", signOut);
+    $("deniedSignOut").addEventListener("click", signOut);
+
+    async function initialize() {
+      const { data: result, error } = await supabaseClient.auth.getSession();
+      if (error) {
+        console.error("Admin session restore failed:", error);
+        showLogin("Não foi possível restaurar a sessão. Tente entrar novamente.");
+        return;
+      }
+      session = result.session;
+      if (session) await loadDashboard();
+      else showLogin();
+    }
+    initialize();
+  </script>
+</body>
+</html>
