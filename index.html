@@ -72,13 +72,10 @@
     .ticker span { margin: 0 23px; color: var(--lime); }
     .section { padding: 70px 0; scroll-margin-top: 100px; }
     .page-view[hidden] { display: none; }
-    .category-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
     .category-card { min-height: 150px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); text-align: left; cursor: pointer; transition: border-color .2s, transform .2s; }
     .category-card:hover { border-color: var(--lime); transform: translateY(-3px); }
     .category-card strong { font: 500 22px var(--display); letter-spacing: -.04em; }
     .category-card span { color: var(--muted); font: 12px var(--mono); }
-    .category-card.all-category { background: var(--lime); color: var(--bg); }
-    .category-card.all-category span { color: #565c3c; }
     .home-category-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
     .home-category-card { min-width: 0; min-height: 0; display: block; overflow: hidden; padding: 0; text-align: left; }
     .category-art { display: block; height: 190px; overflow: hidden; border-radius: 4px 4px 0 0; background: var(--surface); }
@@ -87,8 +84,8 @@
     .home-category-copy strong { font: 500 18px/1.15 var(--display); }
     .home-category-copy span { flex: 0 0 auto; color: var(--muted); font: 12px var(--mono); }
     .home-category-heading { align-items: end; }
-    .all-categories-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--text); font-size: 12px; text-underline-offset: 4px; }
-    .all-categories-link:hover { color: var(--lime); }
+    .all-products-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--text); font-size: 12px; text-underline-offset: 4px; }
+    .all-products-link:hover { color: var(--lime); }
     .faq-list { display: grid; gap: 10px; max-width: 850px; }
     .faq-list details { padding: 20px; border: 1px solid var(--line); background: var(--surface); }
     .faq-list summary { min-height: 44px; display: flex; align-items: center; font: 500 16px var(--display); cursor: pointer; }
@@ -346,7 +343,6 @@
       .hero-art { height: 275px; }
       .product-grid { grid-template-columns: repeat(2, 1fr); gap: 25px 13px; }
       .surprise-box-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .category-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .product-image { height: 250px; }
       .home-category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .category-art { height: 175px; }
@@ -412,7 +408,6 @@
       <a class="brand" href="#home" aria-label="quero, página principal">quero<span>.</span></a>
       <nav class="header-nav" aria-label="Navegação principal">
         <a href="#home" data-page-link="home">Início</a>
-        <a href="#categorias" data-page-link="categories">Categorias</a>
         <a href="#produtos" data-page-link="products">Produtos</a>
         <a href="#faq" data-page-link="faq">FAQ</a>
         <a href="#usuario" data-page-link="user">Minha conta</a>
@@ -451,9 +446,16 @@
         <section class="section" aria-labelledby="homeCategoriesTitle">
           <div class="section-heading home-category-heading">
             <div><div class="section-kicker">um cantinho para cada vontade</div><h2 id="homeCategoriesTitle">Explore por categoria.</h2></div>
-            <a class="all-categories-link" href="#categorias">Ver todas as categorias ↗</a>
+            <a class="all-products-link" href="#produtos">Ver todos os produtos ↗</a>
           </div>
           <div class="home-category-grid" id="homeCategoryCards"></div>
+        </section>
+        <section class="section" id="surpriseBoxesSection" aria-labelledby="surpriseBoxesTitle" hidden>
+          <div class="section-heading">
+            <div><div class="section-kicker">uma surpresa para descobrir</div><h2 id="surpriseBoxesTitle">Caixas-surpresa.</h2></div>
+            <p class="section-subtitle">Escolha uma caixa e descubra qual mimo vem dentro.</p>
+          </div>
+          <div class="surprise-box-grid" id="surpriseBoxes" aria-live="polite"></div>
         </section>
         <section class="section" id="missoes">
           <div class="missions-wrap">
@@ -467,26 +469,9 @@
         </section>
       </section>
 
-      <section class="page-view" id="categoriesPage" data-page="categories" hidden>
-        <section class="section">
-          <div class="section-heading">
-            <div><div class="section-kicker">explore por assunto</div><h2>Categorias.</h2></div>
-            <p class="section-subtitle">Encontre coisinhas para casa, estilo, tecnologia e momentos de pausa.</p>
-          </div>
-          <div class="category-cards" id="categoryCards"></div>
-        </section>
-      </section>
-
       <section class="page-view" id="productsPage" data-page="products" hidden>
         <section class="product-detail-page" id="productDetail" aria-live="polite" hidden></section>
         <section class="section" id="productsSection">
-          <section class="section" aria-labelledby="surpriseBoxesTitle" style="padding-top:0">
-            <div class="section-heading">
-              <div><div class="section-kicker">uma surpresa para descobrir</div><h2 id="surpriseBoxesTitle">Caixas-surpresa.</h2></div>
-              <p class="section-subtitle">Escolha uma caixa e descubra qual mimo vem dentro.</p>
-            </div>
-            <div class="surprise-box-grid" id="surpriseBoxes" aria-live="polite"></div>
-          </section>
           <div class="section-heading">
             <div><div class="section-kicker">curadoria do seu próximo desejo</div><h2>Escolha o que te<br>faz sorrir.</h2></div>
             <p class="section-subtitle">Uma seleção de coisinhas boas para sua coleção imaginária. Vai no que der vontade.</p>
@@ -955,7 +940,6 @@
           renderProducts();
         });
       });
-      const categoryCards = document.getElementById("categoryCards");
       const categoryNames = categories.filter(category => category !== "Tudo");
       const homeCategoryCards = document.getElementById("homeCategoryCards");
       homeCategoryCards.innerHTML = categoryNames.slice(0, 4).map((category, index) => {
@@ -966,20 +950,6 @@
         </button>`;
       }).join("");
       homeCategoryCards.querySelectorAll("[data-category]").forEach(button => {
-        button.addEventListener("click", () => {
-          activeCategory = button.dataset.category;
-          renderCategories();
-          renderProducts();
-          window.location.hash = "#produtos";
-        });
-      });
-      categoryCards.innerHTML = `
-        <button class="category-card all-category" data-category="Tudo"><strong>Ver tudo</strong><span>${products.filter(product => product.is_active !== false).length} produtos ↗</span></button>
-        ${categoryNames.map(category => {
-          const count = products.filter(product => product.category === category && product.is_active !== false).length;
-          return `<button class="category-card" data-category="${escapeHtml(category)}"><strong>${escapeHtml(category)}</strong><span>${count} ${count === 1 ? "produto" : "produtos"} ↗</span></button>`;
-        }).join("")}`;
-      categoryCards.querySelectorAll("[data-category]").forEach(button => {
         button.addEventListener("click", () => {
           activeCategory = button.dataset.category;
           renderCategories();
@@ -1026,7 +996,9 @@
 
     function renderSurpriseBoxes() {
       const container = document.getElementById("surpriseBoxes");
-      container.innerHTML = surpriseBoxes.length ? surpriseBoxes.map(box => `
+      const activeBoxes = surpriseBoxes.filter(box => box.is_active !== false);
+      document.getElementById("surpriseBoxesSection").hidden = activeBoxes.length === 0;
+      container.innerHTML = activeBoxes.map(box => `
         <article class="surprise-box-card">
           <div class="surprise-box-icon" aria-hidden="true">🎁</div>
           <h3>${escapeHtml(box.name)}</h3>
@@ -1039,7 +1011,7 @@
           <button class="primary-btn surprise-box-buy" type="button" data-buy-box="${box.id}" ${box.eligible_count === 0 || boxPurchaseInProgress ? "disabled" : ""}>
             ${box.eligible_count === 0 ? "Sem itens disponíveis" : `Abrir por ${box.price} ✳`}
           </button>
-        </article>`).join("") : '<div class="empty-state">Nenhuma caixa-surpresa disponível por enquanto.</div>';
+        </article>`).join("");
       container.querySelectorAll("[data-buy-box]").forEach(button => {
         button.addEventListener("click", () => buySurpriseBox(Number(button.dataset.buyBox)));
       });
@@ -1173,6 +1145,7 @@
     function renderRoute(shouldScroll = false) {
       const match = window.location.hash.match(/^#produto\/(\d+)$/);
       const legacyRoutes = {
+        "#categorias": "#home",
         "#loja": "#produtos",
         "#colecao": "#usuario",
         "#missoes": "#home",
@@ -1207,7 +1180,6 @@
       document.getElementById("productDetail").hidden = true;
       document.getElementById("productsSection").hidden = false;
       const pageName = {
-        "#categorias": "categories",
         "#produtos": "products",
         "#faq": "faq",
         "#usuario": "user"
