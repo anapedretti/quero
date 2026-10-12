@@ -73,19 +73,19 @@
     .section { padding: 70px 0; scroll-margin-top: 100px; }
     .page-view[hidden] { display: none; }
     .category-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .category-card { min-height: 150px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 20px; border: 1px solid var(--line); background: var(--surface); text-align: left; cursor: pointer; transition: border-color .2s, transform .2s; }
+    .category-card { min-height: 150px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); text-align: left; cursor: pointer; transition: border-color .2s, transform .2s; }
     .category-card:hover { border-color: var(--lime); transform: translateY(-3px); }
     .category-card strong { font: 500 22px var(--display); letter-spacing: -.04em; }
-    .category-card span { color: var(--muted); font: 10px var(--mono); }
+    .category-card span { color: var(--muted); font: 12px var(--mono); }
     .category-card.all-category { background: var(--lime); color: var(--bg); }
     .category-card.all-category span { color: #565c3c; }
     .home-category-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
     .home-category-card { min-width: 0; min-height: 0; display: block; overflow: hidden; padding: 0; text-align: left; }
-    .category-art { display: block; height: 190px; overflow: hidden; background: var(--surface); }
+    .category-art { display: block; height: 190px; overflow: hidden; border-radius: 4px 4px 0 0; background: var(--surface); }
     .category-art svg { display: block; width: 100%; height: 100%; }
     .home-category-copy { display: flex; min-height: 83px; align-items: center; justify-content: space-between; gap: 8px; padding: 14px 16px; }
     .home-category-copy strong { font: 500 18px/1.15 var(--display); }
-    .home-category-copy span { flex: 0 0 auto; color: var(--muted); font: 10px var(--mono); }
+    .home-category-copy span { flex: 0 0 auto; color: var(--muted); font: 12px var(--mono); }
     .home-category-heading { align-items: end; }
     .all-categories-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--text); font-size: 12px; text-underline-offset: 4px; }
     .all-categories-link:hover { color: var(--lime); }
@@ -98,7 +98,12 @@
     .profile-card input { width: 100%; padding: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
     .profile-card input:focus { border-color: var(--lime); outline: none; }
     .profile-card .primary-btn { margin-top: 18px; }
-    .profile-note { color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .password-field { position: relative; }
+    .password-field input { padding-right: 90px; }
+    .password-toggle { position: absolute; top: 50%; right: 8px; min-height: 36px; padding: 6px 8px; transform: translateY(-50%); border: 0; background: transparent; color: var(--lime); font-size: 12px; cursor: pointer; }
+    .password-toggle:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .modal .password-field { margin-bottom: 14px; }
+    .profile-note { color: var(--muted); font-size: 12px; line-height: 1.6; }
     .account-danger { max-width: 680px; margin-top: 30px; padding: 20px; border: 1px solid rgba(245,166,187,.45); }
     .account-danger h3 { margin: 0; font: 500 19px var(--display); }
     .account-danger p { color: var(--muted); font-size: 12px; line-height: 1.6; }
@@ -121,6 +126,7 @@
     .product-emoji { font-size: 84px; z-index: 1; filter: drop-shadow(8px 11px 4px rgba(0,0,0,.16)); transition: transform .3s; }
     .product-card:hover .product-emoji { transform: scale(1.09) rotate(-5deg); }
     .product-tag { position: absolute; top: 12px; left: 12px; background: rgba(17,17,15,.82); padding: 6px 8px; color: var(--text); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+    .sale-badge { position: absolute; z-index: 2; top: 12px; right: 12px; padding: 6px 8px; background: var(--lime); color: var(--bg); font: 10px var(--mono); text-transform: uppercase; }
     .quick-add { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; background: var(--text); color: var(--bg); border: 0; border-radius: 50%; font-size: 20px; cursor: pointer; transition: .2s; }
     .quick-add:hover { background: var(--lime); transform: rotate(90deg); }
     .product-meta { display: flex; justify-content: space-between; gap: 8px; align-items: start; padding: 13px 0 5px; }
@@ -128,8 +134,9 @@
     .product-meta { min-height: 44px; }
     .product-image-wrap { position: relative; cursor: pointer; }
     .product-name { font-size: 13px; font-weight: 600; }
-    .product-category { color: var(--muted); font-size: 10px; margin-top: 5px; }
-    .product-price { color: var(--lime); font: 12px var(--mono); white-space: nowrap; }
+    .product-category { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    .product-price { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; color: var(--lime); font: 12px var(--mono); white-space: nowrap; }
+    .original-price { color: var(--muted); font: 10px var(--mono); text-decoration: line-through; }
     .empty-state { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 50px 0; }
     .collection-intro { color: var(--muted); font-size: 12px; line-height: 1.7; max-width: 520px; margin: 14px 0 32px; }
     .collection-groups { display: grid; gap: 34px; }
@@ -150,7 +157,7 @@
     .collectible.locked .collectible-emoji { opacity: .23; filter: grayscale(1); }
     .collectible-state { color: var(--lime); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .06em; margin-top: 9px; }
     .collectible.locked .collectible-state { color: var(--muted); }
-    .collectible-name { font-size: 11px; line-height: 1.4; margin-top: 4px; }
+    .collectible-name { font-size: 12px; line-height: 1.4; margin-top: 4px; }
     .collection-complete { color: var(--lime); font: 10px var(--mono); margin-top: 7px; }
     .collection-reward { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; padding: 7px 9px; background: rgba(216,243,106,.1); color: var(--lime); font: 9px var(--mono); }
     .collection-groups:empty::after { content: "Ainda não há categorias para mostrar."; color: var(--muted); font-size: 12px; }
@@ -172,14 +179,14 @@
     .detail-sticker { position: absolute; z-index: 2; top: 22px; left: 22px; background: rgba(17,17,15,.84); color: var(--text); padding: 8px 10px; font: 9px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
     .detail-copy { padding: 14px 0; }
     .detail-copy h1 { font-size: clamp(40px, 5vw, 64px); margin: 17px 0 14px; letter-spacing: -.07em; }
-    .detail-copy .product-category { font-size: 11px; }
+    .detail-copy .product-category { font-size: 12px; }
     .detail-description { color: var(--muted); font-size: 14px; line-height: 1.8; margin: 22px 0; max-width: 480px; }
     .detail-price-row { display: flex; align-items: baseline; gap: 9px; padding: 17px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .detail-price { color: var(--lime); font: 20px var(--mono); }
-    .detail-price-note { color: var(--muted); font-size: 10px; }
+    .detail-price-note { color: var(--muted); font-size: 12px; }
     .detail-actions { display: flex; align-items: center; gap: 15px; margin-top: 22px; }
     .detail-actions .primary-btn { padding: 14px 20px; }
-    .detail-note { color: var(--muted); font-size: 10px; line-height: 1.6; margin-top: 18px; }
+    .detail-note { color: var(--muted); font-size: 12px; line-height: 1.6; margin-top: 18px; }
 
     .missions-wrap { background: var(--lime); color: #191a12; padding: 52px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 46px; border-radius: 4px; }
     .missions-wrap .section-kicker { color: #565c3c; }
@@ -190,7 +197,7 @@
     .mission-info { display: flex; align-items: center; gap: 13px; }
     .mission-icon { font-size: 21px; }
     .mission-title { font-size: 12px; font-weight: 700; }
-    .mission-detail { font-size: 10px; margin-top: 4px; color: #565c3c; }
+    .mission-detail { font-size: 12px; margin-top: 4px; color: #565c3c; }
     .mission-frequency { margin-top: 5px; color: #565c3c; font: 9px var(--mono); text-transform: uppercase; }
     .mission-reward { text-align: right; white-space: nowrap; }
     .mission-coins { font: 11px var(--mono); font-weight: 500; }
@@ -203,7 +210,7 @@
     .missions-modal .mission-list { max-height: 55vh; overflow-y: auto; }
     .mission-empty-ad { display: grid; gap: 12px; padding: 16px; background: rgba(255,255,255,.32); border: 1px solid rgba(25,26,18,.12); }
     .mission-empty-ad strong { display: block; font-size: 12px; }
-    .mission-empty-ad p { color: #565c3c; font-size: 10px; line-height: 1.5; margin: 5px 0 0; }
+    .mission-empty-ad p { color: #565c3c; font-size: 12px; line-height: 1.5; margin: 5px 0 0; }
     .mission-empty-ad .primary-btn { width: 100%; }
     .ad-modal { width: min(520px, 100%); }
     .ad-modal .eyebrow { margin-bottom: 14px; }
@@ -214,7 +221,7 @@
     .ad-scene { position: relative; z-index: 1; animation: ad-scene 5s ease-in-out both; }
     .ad-scene-icon { display: block; font-size: 75px; filter: drop-shadow(5px 8px 3px rgba(0,0,0,.14)); }
     .ad-scene-title { margin-top: 12px; font: 600 23px var(--display); letter-spacing: -.05em; }
-    .ad-scene-copy { margin-top: 5px; font-size: 11px; }
+    .ad-scene-copy { margin-top: 5px; font-size: 12px; }
     .ad-timer-row { display: flex; justify-content: space-between; color: var(--muted); font: 10px var(--mono); margin: 14px 0 8px; }
     .ad-progress { height: 4px; background: var(--line); overflow: hidden; }
     .ad-progress-fill { height: 100%; width: 0; background: var(--lime); transition: width 1s linear; }
@@ -227,9 +234,9 @@
     }
     .checkout-shortfall { margin-top: 14px; padding: 14px; background: rgba(245,166,187,.12); border: 1px solid rgba(245,166,187,.45); }
     .checkout-shortfall[hidden] { display: none; }
-    .checkout-shortfall p { color: var(--text); font-size: 11px; margin: 0 0 10px; line-height: 1.5; }
+    .checkout-shortfall p { color: var(--text); font-size: 12px; margin: 0 0 10px; line-height: 1.5; }
     .shortfall-link { min-height: 32px; border: 0; padding: 6px 4px; background: none; color: var(--lime); font: 11px var(--mono); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-    .note-bar { margin-top: 18px; padding: 14px 17px; border: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.6; display: flex; gap: 10px; }
+    .note-bar { margin-top: 18px; padding: 14px 17px; border: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.6; display: flex; gap: 10px; }
     .note-bar strong { color: var(--text); }
     .footer { margin-top: 45px; border-top: 1px solid var(--line); padding: 24px 0 32px; display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font: 10px var(--mono); }
     .footer strong { color: var(--text); font-weight: 400; }
@@ -250,18 +257,18 @@
     .modal input:focus { border-color: var(--lime); }
     .modal .primary-btn { width: 100%; }
     .auth-toggle { min-height: 44px; display: block; margin: 14px auto 0; padding: 8px; color: var(--lime); }
-    .modal-footnote { color: var(--muted); font-size: 10px; text-align: center; margin-top: 15px; }
+    .modal-footnote { color: var(--muted); font-size: 12px; text-align: center; margin-top: 15px; }
     .cart-items { display: grid; gap: 10px; max-height: 280px; overflow-y: auto; margin: 18px 0; }
     .cart-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
     .cart-row-item { min-width: 0; }
-    .cart-row small { display: block; color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .cart-row small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
     .remove-item-btn { min-height: 32px; border: 0; padding: 6px 4px; margin-top: 4px; background: none; color: var(--muted); font: 10px var(--mono); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
     .remove-item-btn:hover { color: var(--pink); }
     .quick-add:disabled { background: var(--lime); cursor: default; transform: none; }
     .primary-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
     .cart-total { display: flex; justify-content: space-between; padding: 14px 0 18px; border-top: 1px solid var(--line); font: 12px var(--mono); }
     .cart-empty { color: var(--muted); font-size: 12px; text-align: center; padding: 22px 0; }
-    .cart-hint { color: var(--muted); font-size: 10px; text-align: center; margin-top: 12px; line-height: 1.5; }
+    .cart-hint { color: var(--muted); font-size: 12px; text-align: center; margin-top: 12px; line-height: 1.5; }
     .celebration-overlay { z-index: 11; overflow-y: auto; }
     .mission-celebration-overlay { z-index: 13; }
     .mission-celebration-modal { width: min(480px, 100%); }
@@ -289,7 +296,7 @@
     .celebration-item-art { flex: 0 0 52px; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 3px; font-size: 30px; }
     .celebration-item-copy { flex: 1; min-width: 0; }
     .celebration-item-name { font-size: 12px; font-weight: 600; }
-    .celebration-item-category { margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .celebration-item-category { margin-top: 4px; color: var(--muted); font-size: 12px; }
     .celebration-item-price { flex: 0 0 auto; color: var(--lime); font: 11px var(--mono); white-space: nowrap; }
     .celebration-receipt { display: grid; gap: 9px; margin-top: 15px; padding-top: 14px; border-top: 1px solid var(--line); }
     .celebration-receipt-row { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 11px; }
@@ -303,7 +310,7 @@
     .celebration-actions .primary-btn { padding: 14px 18px; }
     .celebration-collection-link { color: var(--muted); text-align: center; font-size: 11px; text-underline-offset: 4px; }
     .celebration-collection-link:hover { color: var(--lime); }
-    .celebration-footnote { margin: 13px 0 0; color: var(--muted); font-size: 9px; line-height: 1.5; text-align: center; }
+    .celebration-footnote { margin: 13px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; }
     @keyframes happy-pop { from { opacity: 0; transform: scale(.55) rotate(-18deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
     @keyframes confetti-fall { 0% { opacity: 0; transform: translateY(0) rotate(0); } 12% { opacity: 1; } 100% { opacity: 0; transform: translateY(250px) rotate(460deg); } }
     @media (prefers-reduced-motion: reduce) {
@@ -500,6 +507,20 @@
               <p class="profile-note">Se você alterar o e-mail, enviaremos uma confirmação para o novo endereço antes de atualizar seus dados.</p>
               <button class="primary-btn" type="submit">Salvar dados pessoais</button>
             </form>
+            <form class="profile-card" id="passwordForm">
+              <div class="section-kicker">segurança</div>
+              <label for="newPassword">Nova senha</label>
+              <div class="password-field">
+                <input id="newPassword" name="newPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Mínimo de 6 caracteres" required>
+                <button class="password-toggle" type="button" data-password-toggle aria-controls="newPassword" aria-label="Mostrar senha">Mostrar</button>
+              </div>
+              <label for="confirmPassword">Confirme a nova senha</label>
+              <div class="password-field">
+                <input id="confirmPassword" name="confirmPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Digite a nova senha novamente" required>
+                <button class="password-toggle" type="button" data-password-toggle aria-controls="confirmPassword" aria-label="Mostrar senha">Mostrar</button>
+              </div>
+              <button class="primary-btn" type="submit">Alterar senha</button>
+            </form>
             <section class="section" id="colecao">
               <div class="section-heading">
                 <div><div class="section-kicker">suas descobertas ficam por aqui</div><h2>Minha coleção.</h2></div>
@@ -534,7 +555,10 @@
         <label for="userEmail">E-mail</label>
         <input id="userEmail" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required>
         <label for="userPassword">Senha</label>
-        <input id="userPassword" name="password" type="password" minlength="6" autocomplete="current-password" placeholder="Mínimo de 6 caracteres" required>
+        <div class="password-field">
+          <input id="userPassword" name="password" type="password" minlength="6" autocomplete="current-password" placeholder="Mínimo de 6 caracteres" required>
+          <button class="password-toggle" type="button" data-password-toggle aria-controls="userPassword" aria-label="Mostrar senha">Mostrar</button>
+        </div>
         <button class="primary-btn" id="authSubmit" type="submit">Entrar ✳</button>
       </form>
       <button class="text-btn auth-toggle" id="authModeToggle" type="button">Ainda não tem conta? Criar conta</button>
@@ -918,13 +942,14 @@
           <div class="product-image-wrap">
             <div class="product-image" style="background:${escapeHtml(product.color)}" aria-hidden="true">
               <span class="product-tag">${escapeHtml(product.tag)}</span>
+              ${product.original_price ? '<span class="sale-badge">Oferta</span>' : ""}
               <span class="product-emoji">${escapeHtml(product.emoji)}</span>
           </div>
             <button class="quick-add" data-add="${product.id}" aria-label="${state.owned.includes(product.id) ? `${escapeHtml(product.name)} já está na sua coleção` : state.cart.includes(product.id) ? `${escapeHtml(product.name)} já está na sacola` : `Adicionar ${escapeHtml(product.name)} à sacola`}" ${state.owned.includes(product.id) || state.cart.includes(product.id) ? "disabled" : ""}>${state.owned.includes(product.id) || state.cart.includes(product.id) ? "✓" : "+"}</button>
             </div>
-          <button class="product-meta product-open" data-product="${product.id}" aria-label="Ver detalhes de ${escapeHtml(product.name)}">
+          <button class="product-meta product-open" data-product="${product.id}" aria-label="Ver detalhes de ${escapeHtml(product.name)}${product.original_price ? `, em oferta por ${product.price} moedas, antes ${product.original_price}` : ""}">
             <div><div class="product-name">${escapeHtml(product.name)}</div><div class="product-category">${escapeHtml(product.category)}</div></div>
-            <div class="product-price">✳ ${product.price}</div>
+            <div class="product-price">${product.original_price ? `<del class="original-price">✳ ${product.original_price}</del>` : ""}<span>✳ ${product.price}</span></div>
         </button>
         </article>
       `).join("") || '<div class="empty-state">Nenhum item nesta categoria por enquanto.</div>';
@@ -954,14 +979,14 @@
         </nav>
         <div class="product-detail-grid">
         <div class="detail-art" style="background:${escapeHtml(product.color)}" role="img" aria-label="Ilustração de ${escapeHtml(product.name)}">
-          <span class="detail-sticker">${escapeHtml(product.tag)}</span><span class="detail-emoji" aria-hidden="true">${escapeHtml(product.emoji)}</span>
+          <span class="detail-sticker">${escapeHtml(product.tag)}</span>${product.original_price ? '<span class="sale-badge">Oferta</span>' : ""}<span class="detail-emoji" aria-hidden="true">${escapeHtml(product.emoji)}</span>
         </div>
         <div class="detail-copy">
           <div class="eyebrow">um achadinho para você</div>
           <div class="product-category">${escapeHtml(product.category)}</div>
           <h1>${escapeHtml(product.name)}</h1>
           <p class="detail-description">${escapeHtml(product.description)}</p>
-          <div class="detail-price-row"><span class="detail-price">✳ ${product.price}</span><span class="detail-price-note">moedas virtuais · sem valor real</span></div>
+          <div class="detail-price-row">${product.original_price ? `<del class="original-price">✳ ${product.original_price}</del>` : ""}<span class="detail-price">✳ ${product.price}</span><span class="detail-price-note">moedas virtuais · sem valor real</span></div>
           <div class="detail-actions">
             <button class="primary-btn" id="detailAddToCart" ${owned || inCart || unavailable ? "disabled" : ""}>${owned ? "Já está na sua coleção ✓" : inCart ? "Já está na sacola ✓" : unavailable ? "Indisponível no momento" : "Adicionar à sacola imaginária"}</button>
             <a class="text-btn" href="#produtos">← Voltar para os produtos</a>
@@ -1079,6 +1104,40 @@
       }
       renderAccount();
       showToast(`Dados pessoais atualizados.${emailMessage}`);
+    }
+
+    async function changeAccountPassword(event) {
+      event.preventDefault();
+      if (!authSession) return;
+      const password = document.getElementById("newPassword").value;
+      const confirmation = document.getElementById("confirmPassword").value;
+      if (password !== confirmation) {
+        showToast("As senhas não coincidem.");
+        return;
+      }
+      const { error } = await supabaseClient.auth.updateUser({ password });
+      if (error) {
+        reportSupabaseError("update password", error);
+        return;
+      }
+      document.getElementById("passwordForm").reset();
+      document.querySelectorAll("#passwordForm [data-password-toggle]").forEach(button => {
+        const input = document.getElementById(button.getAttribute("aria-controls"));
+        input.type = "password";
+        button.textContent = "Mostrar";
+        button.setAttribute("aria-label", "Mostrar senha");
+        button.setAttribute("aria-pressed", "false");
+      });
+      showToast("Senha alterada com sucesso.");
+    }
+
+    function togglePasswordVisibility(button) {
+      const input = document.getElementById(button.getAttribute("aria-controls"));
+      const isVisible = input.type === "password";
+      input.type = isVisible ? "text" : "password";
+      button.textContent = isVisible ? "Ocultar" : "Mostrar";
+      button.setAttribute("aria-label", `${isVisible ? "Ocultar" : "Mostrar"} senha`);
+      button.setAttribute("aria-pressed", String(isVisible));
     }
 
     async function cancelAccount() {
@@ -1352,7 +1411,7 @@
       const items = state.cart.map(id => products.find(product => product.id === id)).filter(Boolean);
       const total = items.reduce((sum, product) => sum + product.price, 0);
       document.getElementById("cartItems").innerHTML = items.length
-        ? items.map(product => `<div class="cart-row"><div class="cart-row-item">${escapeHtml(product.emoji)} ${escapeHtml(product.name)}<small>${escapeHtml(product.category)}</small><button class="remove-item-btn" data-remove="${product.id}" aria-label="Remover ${escapeHtml(product.name)} da sacola">Remover</button></div><span>${product.price} ✳</span></div>`).join("")
+        ? items.map(product => `<div class="cart-row"><div class="cart-row-item">${escapeHtml(product.emoji)} ${escapeHtml(product.name)}<small>${escapeHtml(product.category)}</small><button class="remove-item-btn" data-remove="${product.id}" aria-label="Remover ${escapeHtml(product.name)} da sacola">Remover</button></div><span>${product.original_price ? `<del class="original-price">${product.original_price} ✳</del>` : ""}${product.price} ✳</span></div>`).join("")
         : '<div class="cart-empty">Sua sacola está vazia — por enquanto.</div>';
       document.getElementById("cartItems").querySelectorAll("[data-remove]").forEach(button => {
         button.addEventListener("click", async () => {
@@ -1419,7 +1478,7 @@
         <div class="celebration-item">
           <div class="celebration-item-art" style="background:${escapeHtml(product.color)}" aria-hidden="true">${escapeHtml(product.emoji)}</div>
           <div class="celebration-item-copy"><div class="celebration-item-name">${escapeHtml(product.name)}</div><div class="celebration-item-category">${escapeHtml(product.category)}</div></div>
-          <span class="celebration-item-price">−${product.price} ✳</span>
+          <span class="celebration-item-price">${product.original_price ? `<del class="original-price">${product.original_price} ✳</del>` : ""}−${product.price} ✳</span>
         </div>
       `).join("");
 
@@ -1528,6 +1587,11 @@
     document.getElementById("viewCollection").addEventListener("click", closePurchaseCelebration);
     document.getElementById("accountLoginButton").addEventListener("click", () => openLogin("login"));
     document.getElementById("profileForm").addEventListener("submit", saveAccountDetails);
+    document.getElementById("passwordForm").addEventListener("submit", changeAccountPassword);
+    document.querySelectorAll("[data-password-toggle]").forEach(button => {
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => togglePasswordVisibility(button));
+    });
     document.getElementById("cancelAccountButton").addEventListener("click", cancelAccount);
     document.getElementById("celebrationOverlay").addEventListener("click", event => {
       if (event.target.id === "celebrationOverlay") closePurchaseCelebration();

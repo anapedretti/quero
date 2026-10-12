@@ -134,6 +134,7 @@
               <div class="field"><label for="productName">Nome</label><input id="productName" maxlength="100" required></div>
               <div class="field"><label for="productCategory">Categoria</label><select id="productCategory" required></select></div>
               <div class="field"><label for="productPrice">Preço em moedas</label><input id="productPrice" type="number" min="1" max="1000000" step="1" required></div>
+              <div class="field"><label for="productOfferPrice">Preço de oferta (opcional)</label><input id="productOfferPrice" type="number" min="1" max="1000000" step="1" placeholder="Menor que o preço normal"></div>
               <div class="field"><label for="productEmoji">Ícone (emoji)</label><input id="productEmoji" maxlength="16" value="✳" required></div>
               <div class="field"><label for="productColor">Cor do card</label><input id="productColor" type="color" value="#d8f36a" required></div>
               <div class="field"><label for="productTag">Etiqueta</label><input id="productTag" maxlength="40" value="novidade"></div>
@@ -306,7 +307,7 @@
     function renderProducts() {
       $("productList").innerHTML = data.products.length ? data.products.map(item => `
         <div class="item-row">
-          <div><div class="item-title">${escapeHtml(item.emoji)} ${escapeHtml(item.name)} · ${item.price} ✳</div><div class="item-meta">${escapeHtml(item.category)} · ${item.is_active ? "publicado" : "arquivado"}</div></div>
+          <div><div class="item-title">${escapeHtml(item.emoji)} ${escapeHtml(item.name)} · ${item.offer_price ? `${item.offer_price} ✳ (oferta; antes ${item.price} ✳)` : `${item.price} ✳`}</div><div class="item-meta">${escapeHtml(item.category)} · ${item.is_active ? "publicado" : "arquivado"}</div></div>
           <div class="item-actions">
             <button class="action-btn" data-product-edit="${item.id}">Editar</button>
             <button class="action-btn ${item.is_active ? "danger" : ""}" data-product-active="${item.id}" data-active="${item.is_active}">${item.is_active ? "Arquivar" : "Reativar"}</button>
@@ -318,6 +319,7 @@
         $("productName").value = product.name;
         $("productCategory").value = product.category_id;
         $("productPrice").value = product.price;
+        $("productOfferPrice").value = product.offer_price || "";
         $("productEmoji").value = product.emoji;
         $("productColor").value = product.color;
         $("productTag").value = product.tag;
@@ -441,6 +443,7 @@
           p_name: $("productName").value.trim(),
           p_category_id: $("productCategory").value,
           p_price: Number($("productPrice").value),
+          p_offer_price: $("productOfferPrice").value ? Number($("productOfferPrice").value) : null,
           p_emoji: $("productEmoji").value.trim(),
           p_color: $("productColor").value,
           p_tag: $("productTag").value.trim(),
