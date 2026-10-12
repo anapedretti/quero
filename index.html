@@ -37,12 +37,14 @@
     .header-nav { display: flex; align-items: center; gap: 32px; }
     .header-nav a, .header-link { color: var(--muted); text-decoration: none; font-size: 13px; transition: color .2s; }
     .header-nav a:hover, .header-link:hover { color: var(--lime); }
+    .header-nav a[aria-current="page"] { color: var(--lime); }
     .header-actions { display: flex; align-items: center; gap: 12px; }
     .wallet { display: flex; align-items: center; gap: 8px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 999px; font: 12px var(--mono); }
     .coin { color: var(--lime); font-size: 15px; }
     .cart-btn { position: relative; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; font-size: 16px; }
     .cart-count { position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); color: var(--bg); font: 9px var(--mono); padding: 0 4px; }
     .login-btn, .primary-btn { background: var(--lime); color: #191a12; border: 0; border-radius: 999px; padding: 11px 17px; font-weight: 700; font-size: 12px; cursor: pointer; transition: transform .2s, background .2s; }
+    a.primary-btn { display: inline-flex; align-items: center; text-decoration: none; }
     .login-btn:hover, .primary-btn:hover { background: #e4fa91; transform: translateY(-2px); }
     .mobile-menu { display: none; }
 
@@ -65,6 +67,31 @@
     .ticker { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; white-space: nowrap; padding: 14px 0; color: var(--muted); font: 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
     .ticker span { margin: 0 23px; color: var(--lime); }
     .section { padding: 70px 0; scroll-margin-top: 100px; }
+    .page-view[hidden] { display: none; }
+    .category-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .category-card { min-height: 150px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 20px; border: 1px solid var(--line); background: var(--surface); text-align: left; cursor: pointer; transition: border-color .2s, transform .2s; }
+    .category-card:hover { border-color: var(--lime); transform: translateY(-3px); }
+    .category-card strong { font: 500 22px var(--display); letter-spacing: -.04em; }
+    .category-card span { color: var(--muted); font: 10px var(--mono); }
+    .category-card.all-category { background: var(--lime); color: var(--bg); }
+    .category-card.all-category span { color: #565c3c; }
+    .faq-list { display: grid; gap: 10px; max-width: 850px; }
+    .faq-list details { padding: 20px; border: 1px solid var(--line); background: var(--surface); }
+    .faq-list summary { font: 500 16px var(--display); cursor: pointer; }
+    .faq-list details p { max-width: 680px; margin: 14px 0 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .profile-card { max-width: 680px; padding: 24px; border: 1px solid var(--line); background: var(--surface); }
+    .profile-card label { display: block; margin: 18px 0 7px; color: var(--muted); font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .profile-card input { width: 100%; padding: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+    .profile-card input:focus { border-color: var(--lime); outline: none; }
+    .profile-card .primary-btn { margin-top: 18px; }
+    .profile-note { color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .account-danger { max-width: 680px; margin-top: 30px; padding: 20px; border: 1px solid rgba(245,166,187,.45); }
+    .account-danger h3 { margin: 0; font: 500 19px var(--display); }
+    .account-danger p { color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .danger-btn { padding: 10px 15px; border: 1px solid var(--pink); background: transparent; color: var(--pink); font-size: 11px; cursor: pointer; }
+    .danger-btn:hover { background: rgba(245,166,187,.12); }
+    .account-signed-out { max-width: 680px; padding: 22px; border: 1px solid var(--line); color: var(--muted); line-height: 1.7; }
+    .account-signed-out .primary-btn { margin-top: 12px; }
     .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 27px; }
     .section-kicker { color: var(--muted); font: 10px var(--mono); letter-spacing: .13em; text-transform: uppercase; }
     h2 { font: 500 clamp(30px, 4vw, 46px)/1.04 var(--display); letter-spacing: -.06em; margin: 10px 0 0; }
@@ -114,7 +141,10 @@
     .collection-reward { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; padding: 7px 9px; background: rgba(216,243,106,.1); color: var(--lime); font: 9px var(--mono); }
     .collection-groups:empty::after { content: "Ainda não há categorias para mostrar."; color: var(--muted); font-size: 12px; }
     .product-detail-page { display: none; padding: 36px 0 70px; min-height: 65vh; scroll-margin-top: 100px; }
-    body.product-view .hero, body.product-view .ticker, body.product-view #loja, body.product-view #colecao, body.product-view #missoes, body.product-view #sobre, body.product-view .footer { display: none; }
+    .product-detail-page[hidden] { display: none; }
+    body.product-view .page-view { display: none; }
+    body.product-view #productsPage { display: block; }
+    body.product-view #productsSection { display: none; }
     body.product-view .product-detail-page { display: block; }
     .product-breadcrumb { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 11px; margin-bottom: 24px; }
     .product-breadcrumb a { color: var(--muted); text-decoration: none; }
@@ -263,6 +293,7 @@
       .hero { gap: 24px; }
       .hero-art { height: 275px; }
       .product-grid { grid-template-columns: repeat(2, 1fr); gap: 25px 13px; }
+      .category-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .product-image { height: 250px; }
       .collection-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .collectible-art { height: 170px; }
@@ -307,6 +338,9 @@
       .mission { padding: 14px 11px; }
       .mission-title { font-size: 11px; }
       .footer { flex-direction: column; gap: 10px; }
+      .category-card { min-height: 130px; padding: 15px; }
+      .category-card strong { font-size: 18px; }
+      .profile-card { padding: 19px; }
     }
   </style>
 </head>
@@ -315,12 +349,13 @@
   <div class="sticky-header">
     <div class="shell">
       <header>
-      <a class="brand" href="#" aria-label="quero, início">quero<span>.</span></a>
+      <a class="brand" href="#home" aria-label="quero, página principal">quero<span>.</span></a>
       <nav class="header-nav" aria-label="Navegação principal">
-        <a href="#loja">A lojinha</a>
-        <a href="#colecao">Minha coleção</a>
-        <a href="#missoes">Junte moedas</a>
-        <a href="#sobre">Como funciona</a>
+        <a href="#home" data-page-link="home">Início</a>
+        <a href="#categorias" data-page-link="categories">Categorias</a>
+        <a href="#produtos" data-page-link="products">Produtos</a>
+        <a href="#faq" data-page-link="faq">FAQ</a>
+        <a href="#usuario" data-page-link="user">Minha conta</a>
       </nav>
       <div class="header-actions">
         <div class="wallet" aria-label="Saldo de moedas"><span class="coin">✳</span><span id="balance">0</span><span>moedas</span></div>
@@ -333,69 +368,117 @@
 
   <div class="shell">
     <main>
-      <section class="hero">
-        <div>
-          <div class="eyebrow">um mimo para o agora</div>
-          <h1>Desejo sem<br>boleto. <em>Que tal?</em></h1>
-          <p class="hero-copy">Uma lojinha para matar a vontade de escolher, descobrir e colecionar. Aqui, sua moeda é virtual e a diversão não tem fatura.</p>
-          <div class="hero-actions">
-            <button class="primary-btn" onclick="document.querySelector('#loja').scrollIntoView({behavior:'smooth'})">Explorar a loja ↘</button>
-            <button class="text-btn" onclick="document.querySelector('#missoes').scrollIntoView({behavior:'smooth'})">Como ganhar moedas?</button>
+      <section class="page-view" id="homePage" data-page="home">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">um mimo para o agora</div>
+            <h1>Desejo sem<br>boleto. <em>Que tal?</em></h1>
+            <p class="hero-copy">Uma lojinha para matar a vontade de escolher, descobrir e colecionar. Aqui, sua moeda é virtual e a diversão não tem fatura.</p>
+            <div class="hero-actions">
+              <a class="primary-btn" href="#produtos">Explorar a loja ↘</a>
+              <a class="text-btn" href="#faq">Como funciona?</a>
+            </div>
+          </div>
+          <div class="hero-art" aria-label="Ilustração de um vaso divertido">
+            <div class="hero-sticker">feito<br>pra você</div>
+            <div class="hero-art-inner">🪴</div>
+            <div class="art-note">pequenos desejos, grandes sorrisos ↗</div>
           </div>
         </div>
-        <div class="hero-art" aria-label="Ilustração de um vaso divertido">
-          <div class="hero-sticker">feito<br>pra você</div>
-          <div class="hero-art-inner">🪴</div>
-          <div class="art-note">pequenos desejos, grandes sorrisos ↗</div>
+        <div class="ticker" aria-hidden="true">
+          COISAS LEGAIS, SEM PRESSA <span>✳</span> MOEDAS QUE NÃO VIRAM DÍVIDA <span>✳</span> SÓ UMA SIMULAÇÃO, ZERO PAGAMENTOS <span>✳</span> COISAS LEGAIS, SEM PRESSA <span>✳</span>
         </div>
+        <section class="section" id="missoes">
+          <div class="missions-wrap">
+            <div>
+              <div class="section-kicker">a moeda aqui é atenção</div>
+              <h2>Ganhe moedas no seu ritmo.</h2>
+              <p class="mission-intro">Complete missões leves para juntar moedas virtuais. Sem cronômetro, sem pressão — você escolhe quando participar.</p>
+            </div>
+            <div class="mission-list" id="missionsList"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page-view" id="categoriesPage" data-page="categories" hidden>
+        <section class="section">
+          <div class="section-heading">
+            <div><div class="section-kicker">explore por assunto</div><h2>Categorias.</h2></div>
+            <p class="section-subtitle">Encontre coisinhas para casa, estilo, tecnologia e momentos de pausa.</p>
+          </div>
+          <div class="category-cards" id="categoryCards"></div>
+        </section>
+      </section>
+
+      <section class="page-view" id="productsPage" data-page="products" hidden>
+        <section class="product-detail-page" id="productDetail" aria-live="polite" hidden></section>
+        <section class="section" id="productsSection">
+          <div class="section-heading">
+            <div><div class="section-kicker">curadoria do seu próximo desejo</div><h2>Escolha o que te<br>faz sorrir.</h2></div>
+            <p class="section-subtitle">Uma seleção de coisinhas boas para sua coleção imaginária. Vai no que der vontade.</p>
+          </div>
+          <div class="category-list" id="productFilters" aria-label="Filtrar produtos por categoria"></div>
+          <div class="product-grid" id="products" aria-live="polite"></div>
+          <div class="note-bar"><span>✳</span><span><strong>Sem pegadinha:</strong> estas compras são só de mentirinha. As moedas não têm valor real e nenhum pagamento será solicitado.</span></div>
+        </section>
+      </section>
+
+      <section class="page-view" id="faqPage" data-page="faq" hidden>
+        <section class="section">
+          <div class="section-heading">
+            <div><div class="section-kicker">tudo explicado, sem letras miúdas</div><h2>Perguntas frequentes.</h2></div>
+            <p class="section-subtitle">Transparência primeiro: entenda como essa lojinha funciona.</p>
+          </div>
+          <div class="faq-list">
+            <details><summary>O quero. vende produtos de verdade?</summary><p>Não. O quero. é uma experiência de demonstração. Os produtos, a sacola e as compras são virtuais: não há venda, pagamento, entrega ou transação com dinheiro real.</p></details>
+            <details><summary>O que são as moedas virtuais?</summary><p>São pontos sem valor monetário que você pode juntar ao completar missões e usar para simular compras dentro do site. Não podem ser compradas, sacadas ou trocadas por dinheiro.</p></details>
+            <details><summary>Como ganho moedas?</summary><p>Entre na sua conta e complete as missões disponíveis na página inicial. Seu saldo e seu progresso ficam associados à sua conta.</p></details>
+            <details><summary>Para que serve minha coleção?</summary><p>Ela guarda os produtos que você escolheu na simulação. Ao completar uma categoria, você recebe uma recompensa de moedas virtuais, uma única vez por categoria.</p></details>
+            <details><summary>Quais dados ficam salvos?</summary><p>O site guarda seu e-mail de acesso, apelido e progresso da experiência (saldo, missões, sacola e coleção) no Supabase. Você pode cancelar sua conta e apagar esses dados na área Minha conta.</p></details>
+          </div>
+          <section class="section" id="sobre" style="padding-left:0;padding-right:0;padding-bottom:0">
+            <div class="note-bar"><span>♡</span><span><strong>Importante:</strong> sua conta e seu progresso são salvos no Supabase. A sacola e as compras continuam sendo apenas virtuais: não há checkout monetário, entrega, cartão ou dinheiro real envolvidos.</span></div>
+          </section>
+        </section>
+      </section>
+
+      <section class="page-view" id="userPage" data-page="user" hidden>
+        <section class="section">
+          <div class="section-heading">
+            <div><div class="section-kicker">seu espaço no quero.</div><h2>Minha conta.</h2></div>
+            <p class="section-subtitle">Seus dados pessoais, seu saldo e tudo o que já faz parte da sua coleção.</p>
+          </div>
+          <div id="accountSignedOut" class="account-signed-out" hidden>
+            Entre na sua conta para consultar e atualizar seus dados pessoais, ver sua coleção ou cancelar a conta.
+            <br><button class="primary-btn" id="accountLoginButton" type="button">Entrar ou criar conta</button>
+          </div>
+          <div id="accountDetails" hidden>
+            <form class="profile-card" id="profileForm">
+              <div class="section-kicker">dados pessoais</div>
+              <label for="profileName">Nome ou apelido</label>
+              <input id="profileName" name="displayName" maxlength="24" autocomplete="nickname" required>
+              <label for="profileEmail">E-mail da conta</label>
+              <input id="profileEmail" name="email" type="email" autocomplete="email" required>
+              <p class="profile-note">Se você alterar o e-mail, o Supabase pode solicitar a confirmação do novo endereço antes de aplicá-lo.</p>
+              <button class="primary-btn" type="submit">Salvar dados pessoais</button>
+            </form>
+            <section class="section" id="colecao">
+              <div class="section-heading">
+                <div><div class="section-kicker">suas descobertas ficam por aqui</div><h2>Minha coleção.</h2></div>
+                <p class="section-subtitle">Cada compra concluída preenche uma peça do seu catálogo de colecionáveis.</p>
+              </div>
+              <p class="collection-intro">Complete uma categoria colecionando todos os seus produtos e ganhe 100 moedas virtuais. Cada categoria recompensa uma única vez.</p>
+              <div class="collection-groups" id="collectionGroups" aria-live="polite"></div>
+            </section>
+            <section class="account-danger">
+              <h3>Cancelar minha conta</h3>
+              <p>Essa ação é permanente. Sua conta e seu progresso — incluindo saldo, missões, sacola e coleção — serão apagados.</p>
+              <button class="danger-btn" id="cancelAccountButton" type="button">Cancelar conta e apagar meus dados</button>
+            </section>
+          </div>
+        </section>
       </section>
     </main>
-  </div>
-
-  <div class="ticker" aria-hidden="true">
-    COISAS LEGAIS, SEM PRESSA <span>✳</span> MOEDAS QUE NÃO VIRAM DÍVIDA <span>✳</span> SÓ UMA SIMULAÇÃO, ZERO PAGAMENTOS <span>✳</span> COISAS LEGAIS, SEM PRESSA <span>✳</span>
-  </div>
-
-  <div class="shell">
-    <section class="product-detail-page" id="productDetail" aria-live="polite"></section>
-    <section class="section" id="loja">
-      <div class="section-heading">
-        <div><div class="section-kicker">curadoria do seu próximo desejo</div><h2>Escolha o que te<br>faz sorrir.</h2></div>
-        <p class="section-subtitle">Uma seleção de coisinhas boas para sua coleção imaginária. Vai no que der vontade.</p>
-      </div>
-      <div class="category-list" id="categories" aria-label="Categorias de produtos"></div>
-      <div class="product-grid" id="products" aria-live="polite"></div>
-      <div class="note-bar"><span>✳</span><span><strong>Sem pegadinha:</strong> estas compras são só de mentirinha. As moedas não têm valor real e nenhum pagamento será solicitado.</span></div>
-    </section>
-
-    <section class="section" id="colecao">
-      <div class="section-heading">
-        <div><div class="section-kicker">suas descobertas ficam por aqui</div><h2>Minha coleção.</h2></div>
-        <p class="section-subtitle">Cada compra concluída preenche uma peça do seu catálogo de colecionáveis.</p>
-      </div>
-      <p class="collection-intro">Complete uma categoria colecionando todos os seus produtos e ganhe 100 moedas virtuais. Cada categoria recompensa uma única vez.</p>
-      <div class="collection-groups" id="collectionGroups" aria-live="polite"></div>
-    </section>
-
-    <section class="section" id="missoes">
-      <div class="missions-wrap">
-        <div>
-          <div class="section-kicker">a moeda aqui é atenção</div>
-          <h2>Ganhe moedas no seu ritmo.</h2>
-          <p class="mission-intro">Complete missões leves para juntar moedas virtuais. Sem cronômetro, sem pressão — você escolhe quando participar.</p>
-        </div>
-        <div class="mission-list" id="missionsList"></div>
-      </div>
-    </section>
-
-    <section class="section" id="sobre" style="padding-top:0">
-      <div class="section-heading">
-        <div><div class="section-kicker">transparência é tudo</div><h2>O que é o quero.?</h2></div>
-        <p class="section-subtitle">Um experimento de consumo consciente. Explore, brinque e feche a aba sem nenhuma cobrança.</p>
-      </div>
-      <div class="note-bar"><span>♡</span><span><strong>Importante:</strong> sua conta e seu progresso são salvos no Supabase. A sacola e as compras continuam sendo apenas virtuais: não há checkout monetário, entrega, cartão ou dinheiro real envolvidos.</span></div>
-    </section>
-
     <footer class="footer"><strong>quero. — desejos leves, bolso tranquilo.</strong><span>UMA EXPERIÊNCIA SIMULADA · SEM TRANSAÇÕES REAIS</span></footer>
   </div>
 
@@ -458,7 +541,7 @@
         </div>
         <div class="celebration-actions">
           <button class="primary-btn" id="continueShopping">Continuar explorando ✳</button>
-          <a class="celebration-collection-link" id="viewCollection" href="#colecao">Ver minha coleção →</a>
+          <a class="celebration-collection-link" id="viewCollection" href="#usuario">Ver minha coleção →</a>
         </div>
         <p class="celebration-footnote">Uma conquista virtual, só sua. Nenhum pagamento, envio ou compra real aconteceu.</p>
       </div>
@@ -593,6 +676,7 @@
       renderProducts();
       renderMissions();
       renderCollection();
+      renderAccount();
       renderRoute();
     }
 
@@ -606,15 +690,31 @@
     }
 
     function renderCategories() {
-      const container = document.getElementById("categories");
-      container.innerHTML = categories.map(category =>
+      const filters = document.getElementById("productFilters");
+      filters.innerHTML = categories.map(category =>
         `<button class="category-btn ${activeCategory === category ? "active" : ""}" data-category="${category}">${category}</button>`
       ).join("");
-      container.querySelectorAll("button").forEach(button => {
+      filters.querySelectorAll("button").forEach(button => {
         button.addEventListener("click", () => {
           activeCategory = button.dataset.category;
           renderCategories();
           renderProducts();
+        });
+      });
+      const categoryCards = document.getElementById("categoryCards");
+      const categoryNames = categories.filter(category => category !== "Tudo");
+      categoryCards.innerHTML = `
+        <button class="category-card all-category" data-category="Tudo"><strong>Ver tudo</strong><span>${products.length} produtos ↗</span></button>
+        ${categoryNames.map(category => {
+          const count = products.filter(product => product.category === category).length;
+          return `<button class="category-card" data-category="${category}"><strong>${category}</strong><span>${count} ${count === 1 ? "produto" : "produtos"} ↗</span></button>`;
+        }).join("")}`;
+      categoryCards.querySelectorAll("[data-category]").forEach(button => {
+        button.addEventListener("click", () => {
+          activeCategory = button.dataset.category;
+          renderCategories();
+          renderProducts();
+          window.location.hash = "#produtos";
         });
       });
     }
@@ -654,7 +754,7 @@
       const inCart = state.cart.includes(product.id);
       document.getElementById("productDetail").innerHTML = `
         <nav class="product-breadcrumb" aria-label="Navegação estrutural">
-        <a href="#loja">A lojinha</a><span>／</span><span>${product.category}</span><span>／</span><span>${product.name}</span>
+        <a href="#produtos">Produtos</a><span>／</span><span>${product.category}</span><span>／</span><span>${product.name}</span>
         </nav>
         <div class="product-detail-grid">
         <div class="detail-art" style="background:${product.color}" role="img" aria-label="Ilustração de ${product.name}">
@@ -668,7 +768,7 @@
           <div class="detail-price-row"><span class="detail-price">✳ ${product.price}</span><span class="detail-price-note">moedas virtuais · sem valor real</span></div>
           <div class="detail-actions">
             <button class="primary-btn" id="detailAddToCart" ${owned || inCart ? "disabled" : ""}>${owned ? "Já está na sua coleção ✓" : inCart ? "Já está na sacola ✓" : "Adicionar à sacola imaginária"}</button>
-            <a class="text-btn" href="#loja">← Voltar para a lojinha</a>
+            <a class="text-btn" href="#produtos">← Voltar para os produtos</a>
           </div>
           <p class="detail-note">Compra simulada: use moedas conquistadas em missões. Não há cobrança, entrega ou transação com dinheiro real.</p>
         </div>
@@ -683,19 +783,120 @@
 
     function renderRoute(shouldScroll = false) {
       const match = window.location.hash.match(/^#produto\/(\d+)$/);
+      const legacyRoutes = {
+        "#loja": "#produtos",
+        "#colecao": "#usuario",
+        "#missoes": "#home",
+        "#sobre": "#faq"
+      };
+      if (!match && legacyRoutes[window.location.hash]) {
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}${legacyRoutes[window.location.hash]}`);
+      }
       if (match) {
         const product = products.find(item => item.id === Number(match[1]));
         if (!product) {
-        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#loja`);
-        document.body.classList.remove("product-view");
-        return;
+          window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#produtos`);
+          renderRoute(shouldScroll);
+          return;
         }
         renderProductDetail(product);
+        document.getElementById("productDetail").hidden = false;
+        document.getElementById("productsPage").hidden = false;
+        document.getElementById("productsSection").hidden = true;
+        document.querySelectorAll(".page-view[data-page]").forEach(page => {
+          if (page.id !== "productsPage") page.hidden = true;
+        });
+        document.querySelectorAll("[data-page-link]").forEach(link => {
+          if (link.dataset.pageLink === "products") link.setAttribute("aria-current", "page");
+          else link.removeAttribute("aria-current");
+        });
         document.body.classList.add("product-view");
         if (shouldScroll) window.scrollTo(0, 0);
         return;
       }
       document.body.classList.remove("product-view");
+      document.getElementById("productDetail").hidden = true;
+      document.getElementById("productsSection").hidden = false;
+      const pageName = {
+        "#categorias": "categories",
+        "#produtos": "products",
+        "#faq": "faq",
+        "#usuario": "user"
+      }[window.location.hash] || "home";
+      document.querySelectorAll(".page-view[data-page]").forEach(page => {
+        page.hidden = page.dataset.page !== pageName;
+      });
+      document.querySelectorAll("[data-page-link]").forEach(link => {
+        if (link.dataset.pageLink === pageName) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+      if (shouldScroll) window.scrollTo(0, 0);
+    }
+
+    function renderAccount() {
+      const signedIn = Boolean(authSession);
+      document.getElementById("accountSignedOut").hidden = signedIn;
+      document.getElementById("accountDetails").hidden = !signedIn;
+      if (!signedIn) return;
+      document.getElementById("profileName").value = state.name;
+      document.getElementById("profileEmail").value = authSession.user.email || "";
+    }
+
+    async function saveAccountDetails(event) {
+      event.preventDefault();
+      if (!authSession) return;
+      const displayName = document.getElementById("profileName").value.trim();
+      const email = document.getElementById("profileEmail").value.trim();
+      if (!displayName) {
+        showToast("Informe um nome ou apelido.");
+        return;
+      }
+      if (displayName !== state.name) {
+        const result = await callRpc("quero_update_profile", { p_display_name: displayName });
+        if (!result.ok) return;
+        if (typeof result.data !== "string") {
+          console.error("Supabase quero_update_profile returned an invalid profile:", result.data);
+          showToast("Os dados foram enviados, mas não foi possível confirmar o apelido. Atualize a página.");
+          return;
+        }
+        state.name = result.data;
+      }
+      let emailMessage = "";
+      if (email !== (authSession.user.email || "")) {
+        const { data, error } = await supabaseClient.auth.updateUser({ email });
+        if (error) {
+          reportSupabaseError("update email", error);
+          renderAccount();
+          return;
+        }
+        emailMessage = data.user?.email === email
+          ? " O e-mail da conta foi atualizado."
+          : " Confira o novo endereço para confirmar a alteração do e-mail.";
+      }
+      renderAccount();
+      showToast(`Dados pessoais atualizados.${emailMessage}`);
+    }
+
+    async function cancelAccount() {
+      if (!authSession) return;
+      const confirmed = window.confirm("Cancelar sua conta apagará permanentemente seu perfil e todo o progresso salvo. Esta ação não pode ser desfeita. Deseja continuar?");
+      if (!confirmed) return;
+      const result = await callRpc("quero_cancel_account");
+      if (!result.ok) return;
+      if (result.data !== true) {
+        console.error("Supabase quero_cancel_account returned an invalid result:", result.data);
+        showToast("Não foi possível confirmar o cancelamento da conta. Tente novamente.");
+        return;
+      }
+      const { error } = await supabaseClient.auth.signOut({ scope: "local" });
+      if (error) console.error("Supabase local sign out after account cancellation:", error);
+      authSession = null;
+      state = { ...defaultState };
+      window.location.hash = "#home";
+      renderApp();
+      showToast(error
+        ? "Conta apagada. Atualize a página para encerrar a sessão local."
+        : "Conta cancelada e dados apagados.");
     }
 
     function renderMissions() {
@@ -780,7 +981,7 @@
       }
       if (id === "favorite" && state.cart.length === 0) {
         showToast("Adicione um item à sacola para completar esta missão.");
-        document.getElementById("loja").scrollIntoView({ behavior: "smooth" });
+        window.location.hash = "#produtos";
         return;
       }
       const result = await callRpc("quero_claim_mission", { p_mission_id: id });
@@ -1046,9 +1247,12 @@
     document.getElementById("closeCelebration").addEventListener("click", closePurchaseCelebration);
     document.getElementById("continueShopping").addEventListener("click", () => {
       closePurchaseCelebration();
-      document.getElementById("loja").scrollIntoView({ behavior: "smooth" });
+      window.location.hash = "#produtos";
     });
     document.getElementById("viewCollection").addEventListener("click", closePurchaseCelebration);
+    document.getElementById("accountLoginButton").addEventListener("click", () => openLogin("login"));
+    document.getElementById("profileForm").addEventListener("submit", saveAccountDetails);
+    document.getElementById("cancelAccountButton").addEventListener("click", cancelAccount);
     document.getElementById("celebrationOverlay").addEventListener("click", event => {
       if (event.target.id === "celebrationOverlay") closePurchaseCelebration();
     });
