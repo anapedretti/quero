@@ -118,7 +118,30 @@
           <form id="categoryForm">
             <input id="categoryId" type="hidden">
             <div class="form-grid">
-              <div class="field full"><label for="categoryName">Nome da categoria</label><input id="categoryName" maxlength="80" required></div>
+              <div class="field"><label for="categoryName">Nome da categoria</label><input id="categoryName" maxlength="80" required></div>
+              <div class="field"><label for="categoryEmoji">Ícone (emoji)</label>
+                <select id="categoryEmoji" required>
+                  <option value="✳">✳ Estrela</option>
+                  <option value="☕">☕ Caneca</option>
+                  <option value="🧦">🧦 Meias</option>
+                  <option value="🪴">🪴 Planta</option>
+                  <option value="🎧">🎧 Fones</option>
+                  <option value="📔">📔 Caderno</option>
+                  <option value="💡">💡 Lâmpada</option>
+                  <option value="🌈">🌈 Arco-íris</option>
+                  <option value="📷">📷 Câmera</option>
+                  <option value="🎁">🎁 Presente</option>
+                  <option value="🕯️">🕯️ Vela</option>
+                  <option value="🧸">🧸 Ursinho</option>
+                  <option value="🌷">🌷 Flor</option>
+                  <option value="🍵">🍵 Chá</option>
+                  <option value="💎">💎 Cristal</option>
+                  <option value="🪄">🪄 Varinha</option>
+                  <option value="custom">Outro emoji…</option>
+                </select>
+                <input id="categoryEmojiCustom" maxlength="16" placeholder="Digite um emoji" aria-label="Emoji personalizado da categoria" hidden>
+              </div>
+              <div class="field"><label for="categoryColor">Cor do quadro</label><input id="categoryColor" type="color" value="#d8f36a" required></div>
             </div>
             <button class="primary-btn" type="submit">Salvar categoria</button>
             <button class="secondary-btn" type="button" data-reset="categoryForm">Limpar</button>
@@ -175,6 +198,7 @@
             <div class="form-grid">
               <div class="field"><label for="surpriseBoxName">Nome da caixa</label><input id="surpriseBoxName" maxlength="100" required></div>
               <div class="field"><label for="surpriseBoxPrice">Preço da caixa em moedas</label><input id="surpriseBoxPrice" type="number" min="1" max="1000000" step="1" required></div>
+              <div class="field"><label for="surpriseBoxColor">Cor do quadro</label><input id="surpriseBoxColor" type="color" value="#d8f36a" required></div>
               <div class="field"><label for="surpriseBoxCategory">Categoria dos produtos</label>
                 <select id="surpriseBoxCategory"><option value="">Todas as categorias</option></select>
               </div>
@@ -330,7 +354,7 @@
       $("surpriseBoxCategory").value = active.some(item => item.id === selectedBoxCategory) ? selectedBoxCategory : "";
       $("categoryList").innerHTML = data.categories.length ? data.categories.map(item => `
         <div class="item-row">
-          <div><div class="item-title">${escapeHtml(item.name)}</div><div class="item-meta">${escapeHtml(item.id)} · ${item.is_active ? "ativa" : "arquivada"}</div></div>
+          <div><div class="item-title">${escapeHtml(item.emoji)} ${escapeHtml(item.name)}</div><div class="item-meta">${escapeHtml(item.id)} · ${escapeHtml(item.color)} · ${item.is_active ? "ativa" : "arquivada"}</div></div>
           <div class="item-actions">
             <button class="action-btn" data-category-edit="${escapeHtml(item.id)}">Editar</button>
             <button class="action-btn ${item.is_active ? "danger" : ""}" data-category-active="${escapeHtml(item.id)}" data-active="${item.is_active}">${item.is_active ? "Arquivar" : "Reativar"}</button>
@@ -340,6 +364,8 @@
         const category = data.categories.find(item => item.id === button.dataset.categoryEdit);
         $("categoryId").value = category.id;
         $("categoryName").value = category.name;
+        setCategoryEmoji(category.emoji);
+        $("categoryColor").value = category.color;
         $("categoryName").focus();
       }));
       $("categoryList").querySelectorAll("[data-category-active]").forEach(button => button.addEventListener("click", () => {
@@ -390,7 +416,8 @@
       $("surpriseBoxList").innerHTML = data.surprise_boxes.length ? data.surprise_boxes.map(item => `
         <div class="item-row">
           <div>
-            <div class="item-title">🎁 ${escapeHtml(item.name)} · ${item.price} ✳</div>
+            <div class="item-title"><span style="color:${escapeHtml(item.color)}">🎁</span> ${escapeHtml(item.name)} · ${item.price} ✳</div>
+            <div class="item-meta">Cor do quadro: ${escapeHtml(item.color)}</div>
             <div class="item-meta">${escapeHtml(item.category || "Todas as categorias")} · ${item.min_price === null ? "todas as faixas" : `${item.min_price}–${item.max_price} moedas`} · ${item.eligible_count} ${item.eligible_count === 1 ? "produto disponível" : "produtos disponíveis"} · ${item.is_active ? "publicada" : "arquivada"}</div>
             ${item.description ? `<div class="item-meta">${escapeHtml(item.description)}</div>` : ""}
           </div>
@@ -404,6 +431,7 @@
         $("surpriseBoxId").value = box.id;
         $("surpriseBoxName").value = box.name;
         $("surpriseBoxPrice").value = box.price;
+        $("surpriseBoxColor").value = box.color;
         $("surpriseBoxCategory").value = box.category_id || "";
         $("surpriseBoxPriceFilter").value = box.min_price === null ? "all" : "range";
         $("surpriseBoxMinPrice").value = box.min_price ?? "";
@@ -441,6 +469,23 @@
       customInput.required = !hasPreset;
       customInput.value = hasPreset ? "" : emoji;
     }
+
+    function setCategoryEmoji(emoji) {
+      const select = $("categoryEmoji");
+      const customInput = $("categoryEmojiCustom");
+      const hasPreset = [...select.options].some(option => option.value === emoji);
+      select.value = hasPreset ? emoji : "custom";
+      customInput.hidden = hasPreset;
+      customInput.required = !hasPreset;
+      customInput.value = hasPreset ? "" : emoji;
+    }
+
+    $("categoryEmoji").addEventListener("change", () => {
+      const custom = $("categoryEmoji").value === "custom";
+      $("categoryEmojiCustom").hidden = !custom;
+      $("categoryEmojiCustom").required = custom;
+      if (custom) $("categoryEmojiCustom").focus();
+    });
 
     $("productEmoji").addEventListener("change", () => {
       const custom = $("productEmoji").value === "custom";
@@ -539,9 +584,16 @@
       runAction(async () => {
         const name = $("categoryName").value.trim();
         const id = $("categoryId").value || slugify(name);
-        await rpc("quero_admin_save_category", { p_id: id, p_name: name });
+        await rpc("quero_admin_save_category", {
+          p_id: id,
+          p_name: name,
+          p_emoji: ($("categoryEmoji").value === "custom" ? $("categoryEmojiCustom").value : $("categoryEmoji").value).trim(),
+          p_color: $("categoryColor").value
+        });
         $("categoryForm").reset();
         $("categoryId").value = "";
+        setCategoryEmoji("✳");
+        $("categoryColor").value = "#d8f36a";
         await refreshDashboard("Categoria salva.");
       });
     });
@@ -584,10 +636,12 @@
           p_price: Number($("surpriseBoxPrice").value),
           p_category_id: $("surpriseBoxCategory").value || null,
           p_min_price: minPrice,
-          p_max_price: maxPrice
+          p_max_price: maxPrice,
+          p_color: $("surpriseBoxColor").value
         });
         $("surpriseBoxForm").reset();
         $("surpriseBoxId").value = "";
+        $("surpriseBoxColor").value = "#d8f36a";
         setSurpriseBoxPriceRange();
         await refreshDashboard("Caixa-surpresa salva.");
       });
@@ -633,13 +687,17 @@
 
     function resetForm(id) {
       $(id).reset();
-      if (id === "categoryForm") $("categoryId").value = "";
+      if (id === "categoryForm") {
+        $("categoryId").value = "";
+        setCategoryEmoji("✳");
+      }
       if (id === "productForm") {
         $("productId").value = "";
         setProductEmoji("✳");
       }
       if (id === "surpriseBoxForm") {
         $("surpriseBoxId").value = "";
+        $("surpriseBoxColor").value = "#d8f36a";
         setSurpriseBoxPriceRange();
       }
       if (id === "missionForm") $("missionId").readOnly = false;
