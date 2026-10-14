@@ -11,7 +11,8 @@ Loja de demonstração em que as compras usam apenas moedas virtuais; não há p
    - [`supabase/migrations/20261014000100_quero_mission_recurrence.sql`](./supabase/migrations/20261014000100_quero_mission_recurrence.sql), para recorrência e histórico de resgates de missões;
    - [`supabase/migrations/20261015000100_quero_product_offers.sql`](./supabase/migrations/20261015000100_quero_product_offers.sql), para preços promocionais;
    - [`supabase/migrations/20261016000100_quero_surprise_boxes.sql`](./supabase/migrations/20261016000100_quero_surprise_boxes.sql), para caixas-surpresa;
-   - [`supabase/migrations/20261017000100_quero_catalog_visuals.sql`](./supabase/migrations/20261017000100_quero_catalog_visuals.sql), para configurar emoji e cor das categorias e a cor das caixas-surpresa.
+   - [`supabase/migrations/20261017000100_quero_catalog_visuals.sql`](./supabase/migrations/20261017000100_quero_catalog_visuals.sql), para configurar emoji e cor das categorias e a cor das caixas-surpresa;
+   - [`supabase/migrations/20261020000100_quero_product_name_description_update.sql`](./supabase/migrations/20261020000100_quero_product_name_description_update.sql), para atualizar os nomes e as descrições personalizadas dos produtos a partir do ID 9.
    Em um projeto que já tenha recebido alguma migração, execute apenas as migrações que ainda não foram aplicadas, sempre respeitando essa ordem; não é necessário reexecutar as anteriores.
 2. No painel, em **Authentication → URL Configuration**, configure a URL publicada do site como **Site URL** e inclua também em **Redirect URLs**:
    - `http://localhost:8000/**` para desenvolvimento local;
