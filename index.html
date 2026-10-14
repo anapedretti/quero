@@ -47,9 +47,9 @@
     .coin { color: var(--lime); font-size: 15px; }
     .cart-btn { position: relative; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; font-size: 16px; }
     .cart-count { position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); color: var(--bg); font: 9px var(--mono); padding: 0 4px; }
-    .login-btn, .primary-btn { background: var(--lime); color: #191a12; border: 0; border-radius: 999px; padding: 11px 17px; font-weight: 700; font-size: 12px; cursor: pointer; transition: transform .2s, background .2s; }
+    .login-btn, .primary-btn { background: var(--lime); color: #191a12; border: 0; border-radius: 999px; padding: 11px 17px; font-weight: 700; font-size: 12px; cursor: pointer; transition: background .2s; }
     a.primary-btn { display: inline-flex; align-items: center; text-decoration: none; }
-    .login-btn:hover, .primary-btn:hover { background: #e4fa91; transform: translateY(-2px); }
+    .login-btn:hover, .primary-btn:hover { background: #e4fa91; }
     .mobile-menu { display: none; }
 
     .hero { min-height: 440px; padding: 68px 0 58px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 50px; align-items: center; }
@@ -72,8 +72,8 @@
     .ticker span { margin: 0 23px; color: var(--lime); }
     .section { padding: 70px 0; scroll-margin-top: 100px; }
     .page-view[hidden] { display: none; }
-    .category-card { min-height: 150px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); text-align: left; cursor: pointer; transition: border-color .2s, transform .2s; }
-    .category-card:hover { border-color: var(--lime); transform: translateY(-3px); }
+    .category-card { min-height: 150px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); text-align: left; cursor: pointer; transition: border-color .2s; }
+    .category-card:hover { border-color: var(--lime); }
     .category-card strong { font: 500 22px var(--display); letter-spacing: -.04em; }
     .category-card span { color: var(--muted); font: 12px var(--mono); }
     .home-category-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
@@ -123,8 +123,8 @@
     .product-card:hover .product-emoji { transform: scale(1.09) rotate(-5deg); }
     .product-tag { position: absolute; top: 12px; left: 12px; background: rgba(17,17,15,.82); padding: 6px 8px; color: var(--text); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
     .sale-badge { position: absolute; z-index: 2; top: 12px; right: 12px; padding: 6px 8px; background: var(--lime); color: var(--bg); font: 10px var(--mono); text-transform: uppercase; }
-    .quick-add { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; background: var(--text); color: var(--bg); border: 0; border-radius: 50%; font-size: 20px; cursor: pointer; transition: .2s; }
-    .quick-add:hover { background: var(--lime); transform: rotate(90deg); }
+    .quick-add { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; background: var(--text); color: var(--bg); border: 0; border-radius: 50%; font-size: 20px; cursor: pointer; transition: background .2s; }
+    .quick-add:hover { background: var(--lime); }
     .product-meta { display: flex; justify-content: space-between; gap: 8px; align-items: start; padding: 13px 0 5px; }
     .product-open { width: 100%; background: transparent; border: 0; color: inherit; text-align: left; cursor: pointer; }
     .product-meta { min-height: 44px; }
