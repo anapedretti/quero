@@ -155,9 +155,18 @@
     @keyframes box-reveal { from { opacity: .4; transform: scale(.35) rotate(-24deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
     .empty-state { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 50px 0; }
     .collection-intro { color: var(--muted); font-size: 12px; line-height: 1.7; max-width: 520px; margin: 14px 0 32px; }
+    .collection-filters { display: flex; flex-wrap: wrap; gap: 9px; margin: -12px 0 28px; }
+    .collection-filter { min-height: 40px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; transition: border-color .2s, color .2s, background .2s; }
+    .collection-filter:hover, .collection-filter.active { border-color: var(--lime); color: var(--lime); }
+    .collection-filter.active { background: rgba(216,243,106,.08); }
     .collection-groups { display: grid; gap: 34px; }
     .collection-group { border-top: 1px solid var(--line); padding-top: 17px; }
-    .collection-group-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 14px; }
+    .collection-group-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 0; cursor: pointer; list-style: none; }
+    .collection-group-head::-webkit-details-marker { display: none; }
+    .collection-group-head::after { content: "+"; color: var(--lime); font: 18px var(--mono); }
+    .collection-group[open] > .collection-group-head { margin-bottom: 14px; }
+    .collection-group[open] > .collection-group-head::after { content: "−"; }
+    .collection-group-content { padding-top: 14px; }
     .collection-group h3 { margin: 0; font: 500 21px var(--display); letter-spacing: -.04em; }
     .collection-progress { color: var(--muted); font: 10px var(--mono); }
     .collection-progress strong { color: var(--lime); font-weight: 400; }
@@ -177,6 +186,7 @@
     .collection-complete { color: var(--lime); font: 10px var(--mono); margin-top: 7px; }
     .collection-reward { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; padding: 7px 9px; background: rgba(216,243,106,.1); color: var(--lime); font: 9px var(--mono); }
     .collection-groups:empty::after { content: "Ainda não há categorias para mostrar."; color: var(--muted); font-size: 12px; }
+    .collection-empty { grid-column: 1 / -1; margin: 0; padding: 28px 0; color: var(--muted); font-size: 12px; text-align: center; }
     .product-detail-page { display: none; padding: 36px 0 70px; min-height: 65vh; scroll-margin-top: 100px; }
     .product-detail-page[hidden] { display: none; }
     body.product-view .page-view { display: none; }
@@ -541,6 +551,11 @@
                 <p class="section-subtitle">Cada compra concluída preenche uma peça do seu catálogo de colecionáveis.</p>
               </div>
               <p class="collection-intro">Complete uma categoria colecionando todos os seus produtos e ganhe <span id="collectionRewardCopy">moedas virtuais</span>. Cada categoria recompensa uma única vez.</p>
+              <div class="collection-filters" role="group" aria-label="Filtrar itens da coleção">
+                <button class="collection-filter active" type="button" data-collection-filter="all" aria-pressed="true">Tudo</button>
+                <button class="collection-filter" type="button" data-collection-filter="owned" aria-pressed="false">O que eu já tenho</button>
+                <button class="collection-filter" type="button" data-collection-filter="missing" aria-pressed="false">O que falta obter</button>
+              </div>
               <div class="collection-groups" id="collectionGroups" aria-live="polite"></div>
             </section>
             <section class="account-danger">
@@ -723,6 +738,8 @@
     let authSession = null;
     let authMode = "login";
     let activeCategory = "Tudo";
+    let collectionFilter = "all";
+    let openCollectionCategories = null;
     let toastTimer;
     let missionRefreshTimer;
     let adTimer;
@@ -1334,17 +1351,31 @@
     function renderCollection() {
       const container = document.getElementById("collectionGroups");
       document.getElementById("collectionRewardCopy").textContent = `${storeSettings.collection_reward} moedas virtuais`;
+      document.querySelectorAll("[data-collection-filter]").forEach(button => {
+        const active = button.dataset.collectionFilter === collectionFilter;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
       const collectionProducts = products.filter(product => product.is_active !== false || state.owned.includes(product.id));
-      container.innerHTML = [...new Set(collectionProducts.map(product => product.category))].map(category => {
+      const collectionCategories = [...new Set(collectionProducts.map(product => product.category))];
+      if (openCollectionCategories === null) {
+        openCollectionCategories = new Set(collectionCategories.slice(0, 1));
+      }
+      const groups = collectionCategories.map(category => {
         const categoryProducts = collectionProducts.filter(product => product.category === category);
         const activeProducts = categoryProducts.filter(product => product.is_active !== false);
         const ownedProducts = activeProducts.filter(product => state.owned.includes(product.id));
+        const visibleProducts = categoryProducts.filter(product => {
+          const owned = state.owned.includes(product.id);
+          return collectionFilter === "all" || (collectionFilter === "owned" ? owned : !owned);
+        });
+        if (!visibleProducts.length) return "";
         const complete = activeProducts.length > 0 && ownedProducts.length === activeProducts.length;
         const rewardClaimed = state.collectionRewards.includes(category);
         const progress = activeProducts.length
           ? Math.round(ownedProducts.length / activeProducts.length * 100)
           : 0;
-        const collectibles = categoryProducts.map(product => {
+        const collectibles = visibleProducts.map(product => {
           const owned = state.owned.includes(product.id);
           return `<article class="collectible ${owned ? "owned" : "locked"}">
             <div class="collectible-art" ${owned ? `style="background:${escapeHtml(product.color)}"` : ""}>
@@ -1355,23 +1386,42 @@
             ${owned ? `<button class="mission-action" data-collection-product="${product.id}">ver produto →</button>` : ""}
           </article>`;
         }).join("");
-        return `<section class="collection-group" aria-label="Categoria ${escapeHtml(category)}">
-          <div class="collection-group-head">
+        return `<details class="collection-group" data-collection-category="${escapeHtml(category)}" aria-label="Categoria ${escapeHtml(category)}" ${openCollectionCategories.has(category) ? "open" : ""}>
+          <summary class="collection-group-head">
             <h3>${escapeHtml(category)}</h3>
             <div class="collection-progress"><strong>${ownedProducts.length}/${activeProducts.length}</strong> itens ativos</div>
+          </summary>
+          <div class="collection-group-content">
+            <div class="collection-progress-track" role="progressbar" aria-label="Progresso de ${escapeHtml(category)}" aria-valuemin="0" aria-valuemax="${Math.max(activeProducts.length, 1)}" aria-valuenow="${ownedProducts.length}" aria-valuetext="${ownedProducts.length} de ${activeProducts.length} itens ativos">
+              <div class="collection-progress-fill" style="width:${progress}%"></div>
+            </div>
+            <div class="collection-grid">${collectibles}</div>
+            ${complete ? `<div class="collection-complete">✳ Categoria completa${rewardClaimed ? " — recompensa resgatada" : ""}</div>` : ""}
+            ${complete && rewardClaimed ? `<div class="collection-reward">+${storeSettings.collection_reward} ✳ recebidas</div>` : ""}
           </div>
-          <div class="collection-progress-track" role="progressbar" aria-label="Progresso de ${escapeHtml(category)}" aria-valuemin="0" aria-valuemax="${Math.max(activeProducts.length, 1)}" aria-valuenow="${ownedProducts.length}" aria-valuetext="${ownedProducts.length} de ${activeProducts.length} itens ativos">
-            <div class="collection-progress-fill" style="width:${progress}%"></div>
-          </div>
-          <div class="collection-grid">${collectibles}</div>
-          ${complete ? `<div class="collection-complete">✳ Categoria completa${rewardClaimed ? " — recompensa resgatada" : ""}</div>` : ""}
-          ${complete && rewardClaimed ? `<div class="collection-reward">+${storeSettings.collection_reward} ✳ recebidas</div>` : ""}
-        </section>`;
+        </details>`;
       }).join("");
+      container.innerHTML = groups || `<p class="collection-empty">${collectionFilter === "owned" ? "Você ainda não tem itens na coleção." : collectionFilter === "missing" ? "Você já obteve todos os itens disponíveis." : "Ainda não há categorias para mostrar."}</p>`;
+      container.querySelectorAll("[data-collection-category]").forEach(group => {
+        group.addEventListener("toggle", () => {
+          if (group.open) {
+            openCollectionCategories.add(group.dataset.collectionCategory);
+          } else {
+            openCollectionCategories.delete(group.dataset.collectionCategory);
+          }
+        });
+      });
       container.querySelectorAll("[data-collection-product]").forEach(button => {
         button.addEventListener("click", () => openProduct(Number(button.dataset.collectionProduct)));
       });
     }
+
+    document.querySelector(".collection-filters").addEventListener("click", event => {
+      const button = event.target.closest("[data-collection-filter]");
+      if (!button) return;
+      collectionFilter = button.dataset.collectionFilter;
+      renderCollection();
+    });
 
     async function claimMission(id) {
       const mission = missions.find(item => item.id === id);
