@@ -146,17 +146,20 @@
     .surprise-box-rules span { display: block; }
     .surprise-box-buy { width: 100%; margin-top: 8px; }
     .box-opening-modal { width: min(440px, 100%); overflow: hidden; text-align: center; }
-    .box-opening-art { display: grid; place-items: center; height: 190px; margin: -32px -32px 22px; background: var(--lime); font-size: 86px; }
+    .box-opening-art { display: grid; place-items: center; height: 190px; margin: -32px -32px 22px; background: var(--lime); font-size: 86px; transition: background-color .55s ease; }
     .box-opening-art span { display: block; animation: box-suspense .7s ease-in-out infinite alternate; }
-    .box-opening-art.revealed span { animation: box-reveal .45s cubic-bezier(.2,1.5,.5,1) both; }
+    .box-opening-art.revealing span { animation: none; opacity: 0; transform: scale(.5) rotate(-14deg); transition: opacity .24s ease, transform .24s ease; }
+    .box-opening-art.revealed span { animation: box-reveal .55s cubic-bezier(.2,.8,.2,1) both; }
     .box-opening-status { margin: 0 0 18px; font-size: 13px; }
     .box-reveal { padding: 17px; background: var(--bg); border: 1px solid var(--line); }
+    .box-reveal:not([hidden]) { animation: box-result .45s .08s ease both; }
     .box-reveal h4 { margin: 0 0 6px; font: 500 21px var(--display); }
     .box-reveal p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
     .box-refund-note { margin-top: 10px !important; color: var(--lime) !important; }
     .box-opening-modal .primary-btn { width: 100%; }
     @keyframes box-suspense { from { transform: rotate(-8deg) scale(.94); } to { transform: rotate(8deg) scale(1.06); } }
-    @keyframes box-reveal { from { opacity: .4; transform: scale(.35) rotate(-24deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+    @keyframes box-reveal { from { opacity: 0; transform: scale(.5) rotate(-14deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+    @keyframes box-result { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .empty-state { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 50px 0; }
     .collection-intro { color: var(--muted); font-size: 12px; line-height: 1.7; max-width: 520px; margin: 14px 0 32px; }
     .collection-filters { display: flex; flex-wrap: wrap; gap: 9px; margin: -12px 0 28px; }
@@ -1029,6 +1032,7 @@
       const reveal = document.getElementById("boxReveal");
       const closeButton = document.getElementById("closeBoxOpeningButton");
       openingOverlay.dataset.ready = "false";
+      openingArt.classList.remove("revealing");
       openingArt.classList.remove("revealed");
       openingArt.style.backgroundColor = "";
       document.getElementById("boxOpeningIcon").textContent = "🎁";
@@ -1080,6 +1084,8 @@
       }
 
       await new Promise(resolve => window.setTimeout(resolve, 1900));
+      openingArt.classList.add("revealing");
+      await new Promise(resolve => window.setTimeout(resolve, 240));
       openingArt.style.backgroundColor = product.color;
       document.getElementById("boxOpeningIcon").textContent = product.emoji;
       openingArt.classList.add("revealed");
