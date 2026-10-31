@@ -115,6 +115,10 @@
     .category-list::-webkit-scrollbar { display: none; }
     .category-btn { flex: 0 0 auto; min-height: 40px; background: transparent; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); padding: 10px 16px; font-size: 11px; cursor: pointer; transition: .2s; }
     .category-btn:hover, .category-btn.active { color: var(--bg); border-color: var(--lime); background: var(--lime); }
+    .product-search { margin-bottom: 12px; }
+    .product-search label { display: block; margin-bottom: 8px; color: var(--muted); font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .product-search input { width: 100%; min-height: 46px; padding: 12px 15px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--text); font-size: 13px; }
+    .product-search input:focus { border-color: var(--lime); }
     .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
     .product-card { min-width: 0; }
     .product-image { height: 240px; border-radius: 4px; display: grid; place-items: center; position: relative; overflow: hidden; }
@@ -485,6 +489,10 @@
             <div><div class="section-kicker">curadoria do seu próximo desejo</div><h2>Escolha o que te<br>faz sorrir.</h2></div>
             <p class="section-subtitle">Uma seleção de coisinhas boas para sua coleção imaginária. Vai no que der vontade.</p>
           </div>
+          <div class="product-search">
+            <label for="productSearch">Buscar produtos</label>
+            <input id="productSearch" type="search" placeholder="Nome, categoria ou descrição" aria-controls="products">
+          </div>
           <div class="category-list" id="productFilters" role="group" aria-label="Filtrar produtos por categoria"></div>
           <div class="product-grid" id="products" aria-live="polite"></div>
           <div class="note-bar"><span>✳</span><span><strong>Sem pegadinha:</strong> estas compras são só de mentirinha. As moedas não têm valor real e nenhum pagamento será solicitado.</span></div>
@@ -738,6 +746,7 @@
     let authSession = null;
     let authMode = "login";
     let activeCategory = "Tudo";
+    let productSearchQuery = "";
     let collectionFilter = "all";
     let openCollectionCategories = null;
     let toastTimer;
@@ -929,7 +938,17 @@
 
     function renderProducts() {
       const activeProducts = products.filter(product => product.is_active !== false);
-      const visible = activeCategory === "Tudo" ? activeProducts : activeProducts.filter(product => product.category === activeCategory);
+      const normalizedQuery = productSearchQuery.trim().toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const visible = activeProducts.filter(product => {
+        const matchesCategory = activeCategory === "Tudo" || product.category === activeCategory;
+        const searchableText = [product.name, product.category, product.description]
+          .filter(value => typeof value === "string")
+          .join(" ")
+          .toLocaleLowerCase("pt-BR")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        return matchesCategory && searchableText.includes(normalizedQuery);
+      });
       document.getElementById("products").innerHTML = visible.map(product => `
         <article class="product-card">
           <div class="product-image-wrap">
@@ -945,7 +964,7 @@
             <div class="product-price">${product.original_price ? `<del class="original-price">✳ ${product.original_price}</del>` : ""}<span>✳ ${product.price}</span></div>
         </button>
         </article>
-      `).join("") || '<div class="empty-state">Nenhum item nesta categoria por enquanto.</div>';
+      `).join("") || `<div class="empty-state">${normalizedQuery ? "Nenhum produto encontrado. Tente outro termo ou categoria." : "Nenhum item nesta categoria por enquanto."}</div>`;
       document.querySelectorAll("[data-add]").forEach(button => button.addEventListener("click", event => {
         event.stopPropagation();
         addToCart(Number(button.dataset.add));
@@ -961,6 +980,11 @@
         button.addEventListener("click", () => openProduct(Number(button.dataset.product)));
       });
     }
+
+    document.getElementById("productSearch").addEventListener("input", event => {
+      productSearchQuery = event.target.value;
+      renderProducts();
+    });
 
     function renderSurpriseBoxes() {
       const container = document.getElementById("surpriseBoxes");
